@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 import {
     Form,
     FormControl,
@@ -26,6 +24,8 @@ import {
 import axios, { AxiosError } from "axios";
 import warmSmile from "@/public/warm-smile.json";
 import loudlyCrying from "@/public/loudly-crying.json";
+import { useRouter } from "next/navigation";
+import { useSetAtom, useAtomValue, useAtom } from "jotai";
 import Loader from "@/components/general/Loader";
 import { UUID } from "crypto";
 import { DiaryDto, DiaryImageDto, ErrorResponse } from "@/app/types/diary";
@@ -47,7 +47,6 @@ const formSchema = z.object({
 const Input = () => {
     const [images, setImages] = useState<File[]>([]);
     const [audioUrl, setAudioUrl] = useState<Blob | null>(null);
-    const router = useRouter();
     const { push } = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
@@ -58,6 +57,7 @@ const Input = () => {
     const chosenDate = useUserStore((state) => state.selectedDate);
 
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
+    const router = useRouter();
 
     // Redirect to login page
     useEffect(() => {
@@ -116,34 +116,20 @@ const Input = () => {
     };
 
     return (
-        <div className="px-4 min-h-screen flex flex-col justify-evenly">
-            <div>
-                <Button
-                    className="bg-transparent rounded-full "
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                        router.back()
-                    }}
-                >
-                    <X
-                        className="text-primary"
-                    />
-                </Button>
-            </div>
-            <h1 className="text-[32px] text-center font-bold text-primary">Your Diary</h1>
+        <div>
+            <div>{chosenDate}</div>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col"
+                    className="space-y-3 min-h-screen"
                 >
                     <FormField
                         control={form.control}
                         name="diary"
                         render={({ field }) => (
-                            <FormItem className="justify-center">
-                                <FormLabel className="text-[18px] font-semibold ">
-                                    Your today thoughts
+                            <FormItem>
+                                <FormLabel className="text-xl font-semibold">
+                                    Tell us more about your day
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
@@ -162,9 +148,9 @@ const Input = () => {
                         name="audio"
                         render={({ field }) => (
                             <FormItem>
-                                {/* <FormLabel className="text-xl font-semibold">
+                                <FormLabel className="text-xl font-semibold">
                                     Upload your photos
-                                </FormLabel> */}
+                                </FormLabel>
                                 <FormControl>
                                     <VoiceRecorder
                                         onAudioChange={field.onChange}
@@ -180,9 +166,9 @@ const Input = () => {
                         name="images"
                         render={({ field }) => (
                             <FormItem>
-                                {/* <FormLabel className="text-xl font-semibold">
+                                <FormLabel className="text-xl font-semibold">
                                     Upload your photos
-                                </FormLabel> */}
+                                </FormLabel>
                                 <FormControl>
                                     <ImageUploader
                                         onImagesChange={field.onChange}
@@ -195,8 +181,8 @@ const Input = () => {
                     />
 
                     {/* Align bottom */}
-                    <Button className="w-full rounded-full mt-4" type="submit">
-                        Save
+                    <Button className="w-full" type="submit">
+                        Continue
                     </Button>
                 </form>
             </Form>
