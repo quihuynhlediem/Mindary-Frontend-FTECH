@@ -4,11 +4,12 @@ import loudlyCrying from "@/public/loudly-crying.json";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { Router } from "lucide-react";
-import useUserStore from "@/hooks/useUserStore";
+import { selectedDateAtom } from "./Calendar";
+import { useAtomValue } from "jotai";
 
 const EmptyDiary = () => {
 	const router = useRouter()
-	const chosenDate = useUserStore((state) => state.selectedDate)
+	const chosenDate = useAtomValue(selectedDateAtom);
 	return (
 		<main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
 			<div className="text-center">

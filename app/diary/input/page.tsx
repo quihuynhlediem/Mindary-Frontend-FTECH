@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 import {
     Form,
     FormControl,
@@ -16,6 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import Lottie from "lottie-react";
+
+import ImageUpload from "@/components/diary/ImageUpload";
 import {
     Dialog,
     DialogContent,
@@ -23,127 +23,103 @@ import {
     DialogTitle,
     DialogHeader,
 } from "@/components/ui/dialog";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import warmSmile from "@/public/warm-smile.json";
 import loudlyCrying from "@/public/loudly-crying.json";
+import { useRouter } from "next/navigation";
+import { useSetAtom, useAtomValue, useAtom } from "jotai";
+import { selectedDateAtom } from "@/components/diary/Calendar";
 import Loader from "@/components/general/Loader";
 import { UUID } from "crypto";
-import { DiaryDto, DiaryImageDto, ErrorResponse } from "@/app/types/diary";
+import { DiaryDto, DiaryImageDto } from "@/app/types/diary";
+import { accessTokenAtom, userIdAtom } from "@/app/login/page";
 import axiosInstance from "@/apiConfig";
-import ImageUploader from "@/components/diary/ImageUploader";
-import VoiceRecorder from "@/components/diary/VoiceRecorder";
-import useAuthStore from "@/hooks/useAuthStore";
-import useUserStore from "@/hooks/useUserStore";
 
 const formSchema = z.object({
     diary: z
         .string()
         .min(50)
         .max(2000, { message: "Diary exceed character limit" }),
-    audio: z.instanceof(Blob).optional(),
-    images: z.array(z.instanceof(File)).optional(),
+    images: z.any(),
 });
 
 const Input = () => {
-    const [images, setImages] = useState<File[]>([]);
-    const [audioUrl, setAudioUrl] = useState<Blob | null>(null);
-    const router = useRouter();
     const { push } = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
     const [errorDialog, setErrorDialog] = useState<boolean>(false)
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const accessToken = useAuthStore((state) => state.accessToken)
-    const userId = useAuthStore((state) => state.userId)
-    const chosenDate = useUserStore((state) => state.selectedDate);
-
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
-
-    // Redirect to login page
-    useEffect(() => {
-        if (!isAuthenticated) {
-            router.push('/login')
-        }
-    }, [isAuthenticated, router])
-
-    // Prevent rendering while redirecting
-    if (!isAuthenticated) {
-        return null
-    }
+    const accessToken = useAtomValue(accessTokenAtom)
+    const userId = useAtomValue(userIdAtom)
+    const chosenDate = useAtomValue(selectedDateAtom)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             diary: "",
-            audio: undefined,
-            images: [],
+            images: undefined,
         },
     });
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = (values: z.infer<typeof formSchema>) => {
         let formData = new FormData();
-
         formData.append("diary", values.diary);
         formData.append("timezone", timezone)
+        console.log(timezone);
 
-        if (values.audio) formData.append("audio", values.audio);
-        if (values.images) values.images.forEach((image) => formData.append("images", image))
+        let req = async () => {
 
-        setOpen(true);
-        // await new Promise((resolve) => setTimeout(() => resolve("yay"), 5000));
-        try {
-            const res = await axiosInstance.post<DiaryDto>(`/diaries/user/${userId}/${chosenDate}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Authorization": `Bearer ${accessToken}`
-                },
-            });
+            setOpen(true);
+            // await new Promise((resolve) => setTimeout(() => resolve("yay"), 5000));
+            try {
+                const res = await axiosInstance.post<DiaryDto>(`/diaries/user/${userId}/${chosenDate}`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                });
 
-            console.log(res);
+                console.log(res);
 
-        } catch (error: any) {
-            if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError<ErrorResponse>
-                if (axiosError.response?.data) {
-                    console.log(axiosError.response.data.message)
-                }
+                // if (res.status >= 200 && res.status < 300) {
+                //     setOpen(false);
+                //     const data = res.data;
+
+                //     console.log(data);
+
+                //     setDate(new Date());
+                //     push("/diary");
+                // } else {
+                //     setErrorDialog(true);
+                // }
+
+            } catch (error) {
+                console.log(error);
+                setOpen(false);
+                setErrorDialog(true);
+            } finally {
+                setIsLoading(false)
             }
-            setOpen(false);
-            setErrorDialog(true);
-        } finally {
-            setIsLoading(false)
-        }
+        };
+
+        req();
     };
 
     return (
-        <div className="px-4 min-h-screen flex flex-col justify-evenly">
-            <div>
-                <Button
-                    className="bg-transparent rounded-full "
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                        router.back()
-                    }}
-                >
-                    <X
-                        className="text-primary"
-                    />
-                </Button>
-            </div>
-            <h1 className="text-[32px] text-center font-bold text-primary">Your Diary</h1>
+        <div>
+            <div>{chosenDate}</div>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col"
+                    className="space-y-3 min-h-screen"
                 >
                     <FormField
                         control={form.control}
                         name="diary"
                         render={({ field }) => (
-                            <FormItem className="justify-center">
-                                <FormLabel className="text-[18px] font-semibold ">
-                                    Your today thoughts
+                            <FormItem>
+                                <FormLabel className="text-xl font-semibold">
+                                    Tell us more about your day
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
@@ -156,47 +132,29 @@ const Input = () => {
                             </FormItem>
                         )}
                     />
-
-                    <FormField
-                        control={form.control}
-                        name="audio"
-                        render={({ field }) => (
-                            <FormItem>
-                                {/* <FormLabel className="text-xl font-semibold">
-                                    Upload your photos
-                                </FormLabel> */}
-                                <FormControl>
-                                    <VoiceRecorder
-                                        onAudioChange={field.onChange}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <FormField
                         control={form.control}
                         name="images"
                         render={({ field }) => (
                             <FormItem>
-                                {/* <FormLabel className="text-xl font-semibold">
+                                <FormLabel className="text-xl font-semibold">
                                     Upload your photos
-                                </FormLabel> */}
+                                </FormLabel>
                                 <FormControl>
-                                    <ImageUploader
-                                        onImagesChange={field.onChange}
-                                        value={field.value || []}
+                                    <ImageUpload
+                                        onChange={field.onChange}
+                                        value={field.value}
+                                        className="border-border rounded-lg"
                                     />
-                                </FormControl>
+                                </FormControl>{" "}
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
                     {/* Align bottom */}
-                    <Button className="w-full rounded-full mt-4" type="submit">
-                        Save
+                    <Button className="w-full" type="submit">
+                        Continue
                     </Button>
                 </form>
             </Form>

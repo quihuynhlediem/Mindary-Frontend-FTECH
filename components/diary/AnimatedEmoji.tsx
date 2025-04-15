@@ -7,13 +7,13 @@ import okayEmoji from "@/public/emoji/okay.json";
 import happyEmoji from "@/public/emoji/happy.json";
 import happiestEmoji from "@/public/emoji/happiest.json";
 import { useAtomValue } from "jotai";
+import { selectedDateAtom } from "@/components/diary/Calendar";
 import { diaryAtom } from "@/components/diary/DailyUserContent";
-import { Diaries } from "@/app/types/diary";
 
 const AnimatedEmoji = () => {
-    const diary: Diaries = useAtomValue(diaryAtom)!;
+    const diary = useAtomValue(diaryAtom)!;
 
-    // const moodRating = diary.data[0].moodObjects[0].emotionLevel;
+    const moodRating = diary.data[0].moodObjects[0].emotionLevel;
 
     const getEmojiAnimation = (rating: string) => {
         switch (rating) {
