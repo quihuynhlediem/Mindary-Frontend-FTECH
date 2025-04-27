@@ -9,7 +9,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAtomValue } from "jotai";
-import { diaryAtom } from "./DailyUserContent";
+import { diaryAtom } from "./DailyUserDiary";
 
 type Correllation = {
     name: string;

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation';
 import Calendar from '@/components/diary/Calendar';
-import DailyUserContent from '@/components/diary/DailyUserContent';
+import DailyUserContent from '@/components/diary/DailyUserDiary';
 import useAuthStore from '@/hooks/useAuthStore';
 
 const Onboarding = () => {

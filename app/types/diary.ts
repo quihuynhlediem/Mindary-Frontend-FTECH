@@ -1,5 +1,9 @@
 import { UUID } from "crypto";
 
+export interface CustomerDto {
+    encryptedPrivateKey: string;
+    privateKeyIv: string;
+}
 
 export interface Diaries {
     [date: string]: string | null;
@@ -20,6 +24,8 @@ export interface DiaryImageDto {
 export interface DiaryDto {
     id: string;
     content: string;
+    aesKey: string;
+    aesIv: string;
     userId: string;
     images: DiaryImageDto[];
     createdAt: string;
@@ -67,7 +73,14 @@ export interface Recommendation {
 export interface AuthResponse {
     accessToken: string,
     refreshToken: string,
-    userId: UUID
+    userId: UUID,
+    salt: string,
+}
+
+export interface ResetToken {
+    accessToken: string,
+    refreshToken: string,
+    userId: UUID,
 }
 
 // export function parseDiary(data: any): Diary {

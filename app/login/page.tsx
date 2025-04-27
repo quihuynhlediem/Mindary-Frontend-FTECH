@@ -52,8 +52,8 @@ const page = () => {
             })
 
             // Store authentication tokens
-            const { userId, accessToken, refreshToken } = response.data
-            setAuthTokens(userId, accessToken, refreshToken)
+            const { userId, accessToken, refreshToken, salt } = response.data
+            setAuthTokens(userId, accessToken, refreshToken, salt)
 
             toast({
                 variant: "default",

@@ -7,7 +7,7 @@ import okayEmoji from "@/public/emoji/okay.json";
 import happyEmoji from "@/public/emoji/happy.json";
 import happiestEmoji from "@/public/emoji/happiest.json";
 import { useAtomValue } from "jotai";
-import { diaryAtom } from "@/components/diary/DailyUserContent";
+import { diaryAtom } from "@/components/diary/DailyUserDiary";
 import { Diaries } from "@/app/types/diary";
 
 const AnimatedEmoji = () => {
