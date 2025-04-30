@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AnimatedEmoji from "./AnimatedEmoji";
 import PersonalizedMessage from "./PersonalizedMessage";
 import StatusMessage from "./StatusMessage";
@@ -7,25 +7,25 @@ import ReasonSection from "./ReasonSection";
 import Tips from "./Tips";
 import axios, { AxiosError } from "axios";
 import { Button } from "../ui/button";
-import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { format } from "date-fns";
 import EmptyDiary from "./EmptyDiary";
 import Loader from "../general/Loader";
-import { Diaries, DiaryDto, ErrorResponse } from "@/app/types/diary";
+import { Diaries, DiaryDto, DiaryImageDto, ErrorResponse, UserEncryptionData } from "@/app/types/diary";
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
 import axiosInstance from "@/apiConfig";
 import useAuthStore from "@/hooks/useAuthStore";
 import useUserStore from "@/hooks/useUserStore";
+import ImageViewer from "./ImageViewer";
 
-const loginSchema = z.object({
+const passwordSchema = z.object({
     password: z.string().min(8).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/, {
         message: "Password must be 8+ characters with uppercase, lowercase, number, and special character"
     })
 });
 
-const diaryAtom = atom<Diaries>({});
+// const diaryAtom = atom<Diaries>({});
 
 interface PasswordFormData {
     password: string;
@@ -38,7 +38,7 @@ const PasswordModal: React.FC<{
     onClose: () => void;
 }> = ({ isOpen, onSubmit, onClose }) => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<PasswordFormData>({
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(passwordSchema),
         defaultValues: { password: "" }
     });
 
@@ -90,7 +90,9 @@ const PasswordModal: React.FC<{
 const DailyUserContent = () => {
     const chosenDate = useUserStore((state) => state.selectedDate);
     const addDiary = useUserStore((state) => state.addDiary);
+    const addImage = useUserStore((state) => state.addImages);
     const diaries = useUserStore((state) => state.diaries);
+    const diaryImages = useUserStore((state) => state.diaryImages);
     const accessToken = useAuthStore((state) => state.accessToken);
     const userId = useAuthStore((state) => state.userId);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -100,6 +102,8 @@ const DailyUserContent = () => {
     const setDecryptKey = useAuthStore((state) => state.setDecryptKey);
     const decryptKey = useAuthStore((state) => state.decryptKey);
 
+    const UNIT_8_ARRAY: number = parseInt(process.env.UNIT_8_ARRAY || "32")
+
     // Open modal if password is missing and chosenDate is set
     useEffect(() => {
         if (!decryptKey && chosenDate) {
@@ -108,145 +112,298 @@ const DailyUserContent = () => {
     }, [decryptKey, chosenDate]);
 
     // Handle password submission
-    const handlePasswordSubmit = async (password: string) => {
-        setPassword(password.trim());
-        setIsPasswordModalOpen(false);
-    };
+    // const handlePasswordSubmit = async (password: string) => {
+    //     setPassword(password.trim());
+    //     setIsPasswordModalOpen(false);
+    // };
 
-    // Fetch diary entry
-    useEffect(() => {
-        // if (!password) return; // Wait for password and date
-
-        const fetchDiary = async () => {
-            setIsLoading(true);
-            setErrorMessage("");
-
+    // Decrypt private key using password
+    const decryptPrivateKey = useCallback(
+        async (password: string): Promise<string> => {
             try {
-                if (decryptKey == null && password) {
-                    // Fetch user encryption data
-                    const userResponse = await axiosInstance.get(
-                        `/customers/${userId}`,
-                        {
-                            headers: {
-                                "Authorization": `Bearer ${accessToken}`
-                            }
-                        }
-                    );
-                    const { encryptedPrivateKey, privateKeyIv } = userResponse.data;
-                    console.log("encryptedPrivateKey: " + encryptedPrivateKey)
-                    console.log("privateKeyIv: + " + privateKeyIv)
-
-                    // Decrypt private key locally
-                    const iv = Uint8Array.from(atob(privateKeyIv), c => c.charCodeAt(0));
-                    const encryptedPrivateKeyBytes = Uint8Array.from(atob(encryptedPrivateKey), c => c.charCodeAt(0));
-
-                    // Pad or truncate password to 32 bytes
-                    const passwordBytes = new TextEncoder().encode(password);
-                    const keyBytes = new Uint8Array(32);
-                    for (let i = 0; i < 32; i++) {
-                        keyBytes[i] = i < passwordBytes.length ? passwordBytes[i] : 0;
-                    }
-
-                    const privateAESKey = await crypto.subtle.importKey(
-                        "raw",
-                        keyBytes,
-                        { name: "AES-GCM" },
-                        false,
-                        ["decrypt"]
-                    );
-
-                    let privateKeyBytes;
-                    try {
-                        privateKeyBytes = await crypto.subtle.decrypt(
-                            { name: "AES-GCM", iv },
-                            privateAESKey,
-                            encryptedPrivateKeyBytes
-                        );
-                    } catch (e) {
-                        throw new Error("Invalid password");
-                    }
-                    const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKeyBytes)));
-                    console.log("privateKeyBase64: " + privateKeyBase64)
-                    setDecryptKey(privateKeyBase64)
-                }
-
-                console.log(decryptKey)
-
-                // Fetch diary metadata
-                const diaryResponse = await axiosInstance.get<DiaryDto>(
-                    `/diaries/user/${userId}/${chosenDate}`,
+                const response = await axiosInstance.get<UserEncryptionData>(
+                    `/customers/${userId}`,
                     {
-                        headers: {
-                            "Authorization": `Bearer ${accessToken}`
-                        }
+                        headers: { Authorization: `Bearer ${accessToken}` },
                     }
                 );
-                const { content, createdAt, aesKey, aesIv } = diaryResponse.data;
-                console.log("aesIV: " + aesIv)
+                const { encryptedPrivateKey, privateKeyIv } = response.data;
 
-                // // Request AES key decryption
-                const aesKeyResponse = await axiosInstance.post(
-                    `/diaries/user/${userId}/decrypt-aes-key`,
-                    {
-                        encryptedAESKey: aesKey,
-                        privateKey: useAuthStore.getState().decryptKey
-                    },
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}`
-                        }
-                    }
+                const iv = Uint8Array.from(atob(privateKeyIv), (c) => c.charCodeAt(0));
+                const encryptedPrivateKeyBytes = Uint8Array.from(
+                    atob(encryptedPrivateKey),
+                    (c) => c.charCodeAt(0)
                 );
-                const diaryAESKeyBase64 = aesKeyResponse.data;
-                console.log(aesKeyResponse)
-                console.log("diaryAESKeyBase64: " + diaryAESKeyBase64)
 
-                // Decrypt diary content locally
-                const aesKeyBytes = Uint8Array.from(atob(diaryAESKeyBase64), c => c.charCodeAt(0));
-                const diaryAesKey = await crypto.subtle.importKey(
+                // Pad or truncate password to 32 bytes
+                const passwordBytes = new TextEncoder().encode(password);
+                const keyBytes = new Uint8Array(UNIT_8_ARRAY).fill(0);
+                passwordBytes.forEach((byte, i) => {
+                    if (i < 32) keyBytes[i] = byte;
+                });
+
+                const privateAESKey = await crypto.subtle.importKey(
                     "raw",
-                    aesKeyBytes,
+                    keyBytes,
                     { name: "AES-GCM" },
                     false,
                     ["decrypt"]
                 );
-                const aesIvBytes = Uint8Array.from(atob(aesIv), c => c.charCodeAt(0));
-                const encryptedContentBytes = Uint8Array.from(atob(content), c => c.charCodeAt(0));
 
-                const decryptedContentBytes = await crypto.subtle.decrypt(
-                    { name: "AES-GCM", iv: aesIvBytes },
-                    diaryAesKey,
-                    encryptedContentBytes
+                const privateKeyBytes = await crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv },
+                    privateAESKey,
+                    encryptedPrivateKeyBytes
                 );
-                const decryptedText = new TextDecoder().decode(decryptedContentBytes);
-                console.log(decryptedText)
 
-                // Store diary with media
-                addDiary(format(createdAt, "yyyy-MM-dd"), decryptedText);
-            } catch (error: any) {
-                console.error("Fetch diary error:", error);
-                if (axios.isAxiosError(error)) {
-                    const axiosError = error as AxiosError<ErrorResponse>;
-                    if (axiosError.response?.data) {
-                        setErrorMessage(axiosError.response.data.message);
-                    } else {
-                        setErrorMessage("Failed to fetch diary. Please check your password.");
-                    }
-                } else {
-                    setErrorMessage(error.message || "An unexpected error occurred.");
+                return btoa(String.fromCharCode(...new Uint8Array(privateKeyBytes)));
+            } catch (error) {
+                throw new Error("Invalid password or failed to decrypt private key");
+            }
+        },
+        [userId, accessToken]
+    );
+
+    // Decrypt diary content
+    const decryptDiaryContent = useCallback(
+        async (diary: DiaryDto, privateKeyBase64: string): Promise<string> => {
+            const { content, aesKey, aesIv } = diary;
+
+            // Request AES key decryption
+            const aesKeyResponse = await axiosInstance.post<string>(
+                `/diaries/user/${userId}/decrypt-aes-key`,
+                { encryptedAESKey: aesKey, privateKey: privateKeyBase64 },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${accessToken}`,
+                    },
                 }
+            );
+            const diaryAESKeyBase64 = aesKeyResponse.data;
+
+            // Decrypt diary content locally
+            const aesKeyBytes = Uint8Array.from(
+                atob(diaryAESKeyBase64),
+                (c) => c.charCodeAt(0)
+            );
+            const diaryAesKey = await crypto.subtle.importKey(
+                "raw",
+                aesKeyBytes,
+                { name: "AES-GCM" },
+                false,
+                ["decrypt"]
+            );
+            const aesIvBytes = Uint8Array.from(atob(aesIv), (c) => c.charCodeAt(0));
+            const encryptedContentBytes = Uint8Array.from(
+                atob(content),
+                (c) => c.charCodeAt(0)
+            );
+
+            const decryptedContentBytes = await crypto.subtle.decrypt(
+                { name: "AES-GCM", iv: aesIvBytes },
+                diaryAesKey,
+                encryptedContentBytes
+            );
+            return new TextDecoder().decode(decryptedContentBytes);
+        },
+        [userId, accessToken]
+    );
+
+    // Fetch and decrypt diary
+    const fetchDiary = useCallback(async () => {
+        if (!chosenDate || !userId || !accessToken || !decryptKey) return;
+
+        setIsLoading(true);
+
+        try {
+            // Fetch diary metadata
+            const diaryResponse = await axiosInstance.get<DiaryDto>(
+                `/diaries/user/${userId}/${chosenDate}`,
+                {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                }
+            );
+            const data = diaryResponse.data;
+            const images: DiaryImageDto[] = diaryResponse.data.images;
+
+            // Decrypt diary content
+            const decryptedText = await decryptDiaryContent(data, decryptKey);
+
+            // Store decrypted diary
+            addDiary(format(new Date(data.createdAt), "yyyy-MM-dd"), decryptedText);
+            addImage(format(new Date(data.createdAt), "yyyy-MM-dd"), images);
+        } catch (error) {
+            let message = "Failed to fetch or decrypt diary.";
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError<ErrorResponse>;
+                message = axiosError.response?.data.message || message;
+            } else if (error instanceof Error) {
+                message = error.message;
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [chosenDate, userId, accessToken, decryptKey, addDiary, decryptDiaryContent]);
+
+    // Handle password submission
+    const handlePasswordSubmit = useCallback(
+        async (password: string) => {
+            setIsPasswordModalOpen(false);
+            setIsLoading(true);
+            setErrorMessage("");
+
+            try {
+                const privateKeyBase64 = await decryptPrivateKey(password);
+                setDecryptKey(privateKeyBase64);
+            } catch (error) {
+                setErrorMessage("Invalid password. Please try again.");
+                setIsPasswordModalOpen(true);
             } finally {
                 setIsLoading(false);
             }
-        };
+        },
+        [decryptPrivateKey, setDecryptKey]
+    );
 
+    // Fetch diary when decryptKey is set
+    useEffect(() => {
         fetchDiary();
-    }, [chosenDate, password, userId, accessToken, addDiary]);
+    }, [fetchDiary]);
 
+    // // Fetch diary entry
+    // useEffect(() => {
+    //     // if (!password) return; // Wait for password and date
+    //     const fetchDiary = async () => {
+    //         setIsLoading(true);
+    //         setErrorMessage("");
+
+    //         try {
+    //             if (decryptKey == null && password) {
+    //                 // Fetch user encryption data
+    //                 const userResponse = await axiosInstance.get<UserEncryptionData>(
+    //                     `/customers/${userId}`,
+    //                     {
+    //                         headers: {
+    //                             "Authorization": `Bearer ${accessToken}`
+    //                         }
+    //                     }
+    //                 );
+    //                 const { encryptedPrivateKey, privateKeyIv } = userResponse.data;
+
+    //                 // Decrypt private key locally
+    //                 const iv = Uint8Array.from(atob(privateKeyIv), c => c.charCodeAt(0));
+    //                 const encryptedPrivateKeyBytes = Uint8Array.from(atob(encryptedPrivateKey), c => c.charCodeAt(0));
+
+    //                 // Pad or truncate password to 32 bytes
+    //                 const passwordBytes = new TextEncoder().encode(password);
+    //                 const keyBytes = new Uint8Array(32);
+    //                 for (let i = 0; i < 32; i++) {
+    //                     keyBytes[i] = i < passwordBytes.length ? passwordBytes[i] : 0;
+    //                 }
+
+    //                 const privateAESKey = await crypto.subtle.importKey(
+    //                     "raw",
+    //                     keyBytes,
+    //                     { name: "AES-GCM" },
+    //                     false,
+    //                     ["decrypt"]
+    //                 );
+
+    //                 let privateKeyBytes;
+    //                 try {
+    //                     privateKeyBytes = await crypto.subtle.decrypt(
+    //                         { name: "AES-GCM", iv },
+    //                         privateAESKey,
+    //                         encryptedPrivateKeyBytes
+    //                     );
+    //                 } catch (e) {
+    //                     throw new Error("Invalid password");
+    //                 }
+    //                 const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKeyBytes)));
+    //                 console.log("privateKeyBase64: " + privateKeyBase64)
+    //                 setDecryptKey(privateKeyBase64)
+    //             }
+
+    //             // Fetch diary metadata
+    //             const diaryResponse = await axiosInstance.get<DiaryDto>(
+    //                 `/diaries/user/${userId}/${chosenDate}`,
+    //                 {
+    //                     headers: {
+    //                         "Authorization": `Bearer ${accessToken}`
+    //                     }
+    //                 }
+    //             );
+    //             const { content, createdAt, aesKey, aesIv } = diaryResponse.data;
+
+    //             // // Request AES key decryption
+    //             const aesKeyResponse = await axiosInstance.post(
+    //                 `/diaries/user/${userId}/decrypt-aes-key`,
+    //                 {
+    //                     encryptedAESKey: aesKey,
+    //                     privateKey: useAuthStore.getState().decryptKey
+    //                 },
+    //                 {
+    //                     headers: {
+    //                         "Content-Type": "application/json",
+    //                         "Authorization": `Bearer ${accessToken}`
+    //                     }
+    //                 }
+    //             );
+    //             const diaryAESKeyBase64 = aesKeyResponse.data;
+
+    //             // Decrypt diary content locally
+    //             const aesKeyBytes = Uint8Array.from(atob(diaryAESKeyBase64), c => c.charCodeAt(0));
+    //             const diaryAesKey = await crypto.subtle.importKey(
+    //                 "raw",
+    //                 aesKeyBytes,
+    //                 { name: "AES-GCM" },
+    //                 false,
+    //                 ["decrypt"]
+    //             );
+    //             const aesIvBytes = Uint8Array.from(atob(aesIv), c => c.charCodeAt(0));
+    //             const encryptedContentBytes = Uint8Array.from(atob(content), c => c.charCodeAt(0));
+
+    //             const decryptedContentBytes = await crypto.subtle.decrypt(
+    //                 { name: "AES-GCM", iv: aesIvBytes },
+    //                 diaryAesKey,
+    //                 encryptedContentBytes
+    //             );
+    //             const decryptedText = new TextDecoder().decode(decryptedContentBytes);
+    //             console.log(decryptedText)
+
+    //             // Store diary with media
+    //             addDiary(format(createdAt, "yyyy-MM-dd"), decryptedText);
+    //         } catch (error: any) {
+    //             console.error("Fetch diary error:", error);
+    //             if (axios.isAxiosError(error)) {
+    //                 const axiosError = error as AxiosError<ErrorResponse>;
+    //                 if (axiosError.response?.data) {
+    //                     setErrorMessage(axiosError.response.data.message);
+    //                 } else {
+    //                     setErrorMessage("Failed to fetch diary. Please check your password.");
+    //                 }
+    //             } else {
+    //                 setErrorMessage(error.message || "An unexpected error occurred.");
+    //             }
+    //         } finally {
+    //             setIsLoading(false);
+    //         }
+    //     };
+
+    //     fetchDiary();
+    // }, [chosenDate, password, userId, accessToken, addDiary]);
+
+    // if (isLoading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-full">
+    //             <Loader />
+    //         </div>
+    //     );
+    //}
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-full">
+            <div className="flex justify-center items-center my-48">
                 <Loader />
             </div>
         );
@@ -271,11 +428,17 @@ const DailyUserContent = () => {
                 onClose={() => setIsPasswordModalOpen(false)}
             />
             {diaries[chosenDate!] ? (
-                <div>
+                <div className="p-4 rounded-lg bg-white">
                     <p>{diaries[chosenDate!]}</p>
+                    {diaries[chosenDate!] ? (
+                        <ImageViewer diaryImages={diaryImages[chosenDate!]} />
+                    ) : (
+                        <div></div>
+                    )}
+
                     {/* Uncomment when ready to include these components */}
                     {/* <AnimatedEmoji />
-                    <StatusMessage />
+                    <StatusMessage />   
                     <PersonalizedMessage />
                     <ReasonSection />
                     <Tips /> */}
@@ -288,4 +451,3 @@ const DailyUserContent = () => {
 };
 
 export default DailyUserContent;
-export { diaryAtom };

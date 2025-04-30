@@ -21,6 +21,10 @@ export interface DiaryImageDto {
     updatedAt: string;
 }
 
+export interface DiaryImages {
+    [date: string]: DiaryImageDto[]
+}
+
 export interface DiaryDto {
     id: string;
     content: string;
@@ -30,6 +34,19 @@ export interface DiaryDto {
     images: DiaryImageDto[];
     createdAt: string;
     updatedAt: string;
+}
+
+export interface DiaryFormData {
+    diary: string;
+    timezone: string;
+    ai: "yes" | "no";
+    audio?: Blob;
+    images?: File[];
+}
+
+export interface UserEncryptionData {
+    encryptedPrivateKey: string;
+    privateKeyIv: string;
 }
 
 export interface Datum {
@@ -128,127 +145,127 @@ export interface ResetToken {
 /**
  * Parses a CorrelationObject.
  */
-function parseCorrelationObject(
-    data: any,
-    coIndex: number,
-    datumIndex: number,
-    coArrayIndex: number,
-): CorrelationObject {
-    return {
-        name: parseString(
-            data.name,
-            `CorrelationObject.name at Datum ${datumIndex}, CorrelationArray ${coArrayIndex}, Index ${coIndex}`,
-        ),
-        description: parseString(
-            data.description,
-            `CorrelationObject.description at Datum ${datumIndex}, CorrelationArray ${coArrayIndex}, Index ${coIndex}`,
-        ),
-    };
-}
+// function parseCorrelationObject(
+//     data: any,
+//     coIndex: number,
+//     datumIndex: number,
+//     coArrayIndex: number,
+// ): CorrelationObject {
+//     return {
+//         name: parseString(
+//             data.name,
+//             `CorrelationObject.name at Datum ${datumIndex}, CorrelationArray ${coArrayIndex}, Index ${coIndex}`,
+//         ),
+//         description: parseString(
+//             data.description,
+//             `CorrelationObject.description at Datum ${datumIndex}, CorrelationArray ${coArrayIndex}, Index ${coIndex}`,
+//         ),
+//     };
+// }
 
 /**
  * Parses a MoodObject.
  */
-function parseMoodObject(
-    data: any,
-    moIndex: number,
-    datumIndex: number,
-): MoodObject {
-    return {
-        category: Array.isArray(data.category)
-            ? data.category.map((cat: any, catIndex: number) =>
-                parseString(
-                    cat,
-                    `MoodObject.category[${catIndex}] at Datum ${datumIndex}, MoodObject ${moIndex}`,
-                ),
-            )
-            : [],
-        emotionLevel: parseString(
-            data.emotionLevel,
-            `MoodObject.emotionLevel at Datum ${datumIndex}, MoodObject ${moIndex}`,
-        ),
-        summary: parseString(
-            data.summary,
-            `MoodObject.summary at Datum ${datumIndex}, MoodObject ${moIndex}`,
-        ),
-    };
-}
+// function parseMoodObject(
+//     data: any,
+//     moIndex: number,
+//     datumIndex: number,
+// ): MoodObject {
+//     return {
+//         category: Array.isArray(data.category)
+//             ? data.category.map((cat: any, catIndex: number) =>
+//                 parseString(
+//                     cat,
+//                     `MoodObject.category[${catIndex}] at Datum ${datumIndex}, MoodObject ${moIndex}`,
+//                 ),
+//             )
+//             : [],
+//         emotionLevel: parseString(
+//             data.emotionLevel,
+//             `MoodObject.emotionLevel at Datum ${datumIndex}, MoodObject ${moIndex}`,
+//         ),
+//         summary: parseString(
+//             data.summary,
+//             `MoodObject.summary at Datum ${datumIndex}, MoodObject ${moIndex}`,
+//         ),
+//     };
+// }
 
 /**
  * Parses a SymptomObject.
  */
-function parseSymptomObject(
-    data: any,
-    soIndex: number,
-    datumIndex: number,
-    soArrayIndex: number,
-): SymptomObject {
-    return {
-        risk: parseString(
-            data.risk,
-            `SymptomObject.risk at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
-        ),
-        name: parseString(
-            data.name,
-            `SymptomObject.name at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
-        ),
-        suggestions: parseString(
-            data.suggestions,
-            `SymptomObject.suggestions at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
-        ),
-        description: parseString(
-            data.description,
-            `SymptomObject.description at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
-        ),
-    };
-}
+// function parseSymptomObject(
+//     data: any,
+//     soIndex: number,
+//     datumIndex: number,
+//     soArrayIndex: number,
+// ): SymptomObject {
+//     return {
+//         risk: parseString(
+//             data.risk,
+//             `SymptomObject.risk at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
+//         ),
+//         name: parseString(
+//             data.name,
+//             `SymptomObject.name at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
+//         ),
+//         suggestions: parseString(
+//             data.suggestions,
+//             `SymptomObject.suggestions at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
+//         ),
+//         description: parseString(
+//             data.description,
+//             `SymptomObject.description at Datum ${datumIndex}, SymptomArray ${soArrayIndex}, Index ${soIndex}`,
+//         ),
+//     };
+// }
 
 /**
  * Utility function to parse a string with error handling.
  */
-function parseString(value: any, fieldName: string): string {
-    if (typeof value !== "string") {
-        throw new Error(
-            `Expected string for ${fieldName}, but got ${typeof value}`,
-        );
-    }
-    return value;
-}
+// function parseString(value: any, fieldName: string): string {
+//     if (typeof value !== "string") {
+//         throw new Error(
+//             `Expected string for ${fieldName}, but got ${typeof value}`,
+//         );
+//     }
+//     return value;
+// }
 
 /**
  * Utility function to parse a Date with error handling.
  */
-function parseDate(value: any, fieldName: string): Date {
-    const date = new Date(value);
-    if (isNaN(date.getTime())) {
-        throw new Error(`Invalid date for ${fieldName}: ${value}`);
-    }
-    return date;
-}
+// function parseDate(value: any, fieldName: string): Date {
+//     const date = new Date(value);
+//     if (isNaN(date.getTime())) {
+//         throw new Error(`Invalid date for ${fieldName}: ${value}`);
+//     }
+//     return date;
+// }
 
 /**
  * Utility function to parse a number with error handling.
  */
-function parseNumber(value: any, fieldName: string): number {
-    const num = Number(value);
-    if (isNaN(num)) {
-        throw new Error(`Invalid number for ${fieldName}: ${value}`);
-    }
-    return num;
-}
+// function parseNumber(value: any, fieldName: string): number {
+//     const num = Number(value);
+//     if (isNaN(num)) {
+//         throw new Error(`Invalid number for ${fieldName}: ${value}`);
+//     }
+//     return num;
+// }
 
-function parseRecommendation(value: any[][]): Recommendation[] {
-    const inner = value[0];
+// function parseRecommendation(value: any[][]): Recommendation[] {
+//     const inner = value[0];
 
-    if (!inner || inner.length <= 0) {
-        return [];
-    }
+//     if (!inner || inner.length <= 0) {
+//         return [];
+//     }
 
-    return inner.map((v) => {
-        return {
-            practice: v.practice || "",
-            action: v.action || "",
-            benefit: v.benefit || "",
-        };
-    });
-}
+//     return inner.map((v) => {
+//         return {
+//             practice: v.practice || "",
+//             action: v.action || "",
+//             benefit: v.benefit || "",
+//         };
+//     });
+// }

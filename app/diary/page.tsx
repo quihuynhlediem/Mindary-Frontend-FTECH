@@ -1,32 +1,18 @@
-"use client"
-import React, { useEffect } from 'react'
-import { useRouter } from 'next/navigation';
-import Calendar from '@/components/diary/Calendar';
-import DailyUserContent from '@/components/diary/DailyUserDiary';
-import useAuthStore from '@/hooks/useAuthStore';
+// diary/page.tsx
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { format } from "date-fns";
 
-const Onboarding = () => {
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
+const DiaryRedirect = () => {
     const router = useRouter();
+    const today = format(new Date(), "yyyy-MM-dd");
 
-    // Redirect to login page
     useEffect(() => {
-        if (!isAuthenticated) {
-            router.push('/login')
-        }
-    }, [isAuthenticated, router])
+        router.replace(`/diary/${today}`);
+    }, [router]);
 
-    // Prevent rendering while redirecting
-    if (!isAuthenticated) {
-        return null
-    }
+    return null;
+};
 
-    return (
-        <div>
-            <Calendar />
-            <DailyUserContent />
-        </div>
-    );
-}
-
-export default Onboarding;
+export default DiaryRedirect;

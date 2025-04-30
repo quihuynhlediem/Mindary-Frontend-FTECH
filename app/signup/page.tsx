@@ -53,6 +53,7 @@ const page = () => {
     const [errorMessage, setErrorMessage] = useState<string | any>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const { toast } = useToast()
+    const UNIT_8_ARRAY: number = parseInt(process.env.UNIT_8_ARRAY || "32")
 
     const form = useForm<z.infer<typeof signupSchema>>({
         resolver: zodResolver(signupSchema),
@@ -109,7 +110,7 @@ const page = () => {
             // Pad or truncate password to 32 bytes (AES-256)
             const passwordBytes = new TextEncoder().encode(values.password);
             console.log(passwordBytes)
-            const keyBytes = new Uint8Array(32);
+            const keyBytes = new Uint8Array(UNIT_8_ARRAY);
             for (let i = 0; i < 32; i++) {
                 keyBytes[i] = i < passwordBytes.length ? passwordBytes[i] : 0;
             }

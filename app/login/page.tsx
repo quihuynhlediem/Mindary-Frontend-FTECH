@@ -14,10 +14,11 @@ import { useToast } from "@/hooks/use-toast"
 import { z } from 'zod'
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+
 import Link from "next/link"
 import axiosInstance from '@/apiConfig'
 import useAuthStore from '@/hooks/useAuthStore'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 
 const loginSchema = z.object({
     email: z.string().email({
@@ -64,8 +65,6 @@ const page = () => {
             // Redirect to dashboard
             window.location.href = "/"
         } catch (error: any) {
-            console.error('Login error:', error)
-
             // Handle API errors
             if (error.response?.data?.message) {
                 toast({
