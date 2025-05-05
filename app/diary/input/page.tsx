@@ -28,7 +28,6 @@ import warmSmile from "@/public/warm-smile.json";
 import loudlyCrying from "@/public/loudly-crying.json";
 import { useRouter } from "next/navigation";
 import { useSetAtom, useAtomValue, useAtom } from "jotai";
-import { selectedDateAtom } from "@/components/diary/Calendar";
 import Loader from "@/components/general/Loader";
 import { UUID } from "crypto";
 import { DiaryDto, DiaryImageDto } from "@/app/types/diary";
@@ -44,14 +43,31 @@ const formSchema = z.object({
 });
 
 const Input = () => {
+    const [images, setImages] = useState<File[]>([]);
+    const [audioUrl, setAudioUrl] = useState<Blob | null>(null);
     const { push } = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
     const [errorDialog, setErrorDialog] = useState<boolean>(false)
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const accessToken = useAtomValue(accessTokenAtom)
-    const userId = useAtomValue(userIdAtom)
-    const chosenDate = useAtomValue(selectedDateAtom)
+    const accessToken = useAuthStore((state) => state.accessToken)
+    const userId = useAuthStore((state) => state.userId)
+    const chosenDate = useUserStore((state) => state.selectedDate);
+
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
+    const router = useRouter();
+
+    // Redirect to login page
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.push('/login')
+        }
+    }, [isAuthenticated, router])
+
+    // Prevent rendering while redirecting
+    if (!isAuthenticated) {
+        return null
+    }
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -132,6 +148,25 @@ const Input = () => {
                             </FormItem>
                         )}
                     />
+
+                    <FormField
+                        control={form.control}
+                        name="audio"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-xl font-semibold">
+                                    Upload your photos
+                                </FormLabel>
+                                <FormControl>
+                                    <VoiceRecorder
+                                        onAudioChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
                     <FormField
                         control={form.control}
                         name="images"
