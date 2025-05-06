@@ -1,4 +1,4 @@
-// File: C:\Documents\Midary-SEPM\Mindary-Frontend-FTECH\app\login\page.tsx
+// File: C:\Users\ADMIN\Documents\project\mindary_v2\Mindary-Frontend-FTECH\app\login\page.tsx
 import * as entry from '../../../../app/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
