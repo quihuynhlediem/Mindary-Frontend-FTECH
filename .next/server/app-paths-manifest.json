@@ -1,6 +1,13 @@
 {
+<<<<<<< HEAD
   "/diary/[diaryID]/page": "app/diary/[diaryID]/page.js",
   "/page": "app/page.js",
   "/diary/[diaryID]/input/page": "app/diary/[diaryID]/input/page.js",
   "/login/page": "app/login/page.js"
+=======
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js",
+  "/login/page": "app/login/page.js",
+  "/signup/page": "app/signup/page.js"
+>>>>>>> 88447709987378cedfbf3721867a7528856e8acf
 }

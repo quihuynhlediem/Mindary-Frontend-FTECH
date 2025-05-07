@@ -26,10 +26,22 @@
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
     ],
+<<<<<<< HEAD
     "/diary/[diaryID]/input/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/diary/[diaryID]/input/page.js"
+=======
+    "/signup/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/signup/page.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
+>>>>>>> 88447709987378cedfbf3721867a7528856e8acf
     ]
   }
 }
