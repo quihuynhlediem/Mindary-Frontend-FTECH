@@ -51,6 +51,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesChange, value }) 
               size="icon"
               className="absolute top-1 right-1 bg-white rounded-full p-1"
               onClick={() => removeImage(index)}
+              type="button"
             >
               <X size={16} className="text-red-500" />
             </Button>
@@ -61,14 +62,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesChange, value }) 
       <div className="flex space-x-4 mt-2 justify-evenly">
         <div {...getRootProps()} className="flex flex-col">
           <Input {...getInputProps()} className="hidden" />
-          <Button variant="outline" className="flex items-center space-x-2">
+          <Button variant="outline" className="flex items-center space-x-2" type="button">
             <Camera size={20} className="text-primary" />
             <span>Camera</span>
           </Button>
         </div>
         <div {...getRootProps()} className="flex flex-col">
           <Input {...getInputProps()} className="hidden" />
-          <Button variant="outline" className="flex items-center space-x-2">
+          <Button variant="outline" className="flex items-center space-x-2" type="button">
             <ImageIcon size={20} className="text-primary" />
             <span>Gallery</span>
           </Button>

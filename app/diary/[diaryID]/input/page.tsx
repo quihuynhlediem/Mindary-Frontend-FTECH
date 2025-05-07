@@ -64,6 +64,7 @@ const Input = () => {
     const accessToken = useAuthStore((state) => state.accessToken)
     const userId = useAuthStore((state) => state.userId)
     const chosenDate = useUserStore((state) => state.selectedDate);
+    // const chosenDate = useParams<{ diaryID: string }>;
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
 
     const { toast } = useToast()
@@ -95,36 +96,32 @@ const Input = () => {
         setOpen(true);
 
         // Create form data
-        const formData: DiaryFormData = {
-            diary: values.diary,
-            timezone: timezone,
-            ai: values.analysis ? "yes" : "no",
-            audio: values.audio,
-            images: values.images,
-        };
+        // const formData: DiaryFormData = {
+        //     diary: values.diary,
+        //     timezone: timezone,
+        //     ai: values.analysis ? "yes" : "no",
+        //     audio: values.audio,
+        //     images: values.images,
+        // };
 
-        console.log(values.analysis)
-        setOpen(false)
-        // Navigate to the diary page for the selected date
-        router.push(`/diary/${chosenDate}`)
+        let formData = new FormData();
 
-        // let formData = new FormData();
+        formData.append("diary", values.diary);
+        formData.append("timezone", timezone)
 
-        // formData.append("diary", values.diary);
-        // formData.append("timezone", timezone)
+        if (values.analysis) {
+            formData.append("ai", "yes")
+        } else {
+            formData.append("ai", "no")
+        }
 
-        // if (values.analysis) {
-        //     formData.append("ai", "yes")
-        // } else {
-        //     formData.append("ai", "no")
-        // }
-
-        // if (values.audio) formData.append("audio", values.audio);
-        // if (values.images) values.images.forEach((image) => formData.append("images", image))
+        if (values.audio) formData.append("audio", values.audio);
+        if (values.images) values.images.forEach((image) => formData.append("images", image))
 
         // await new Promise((resolve) => setTimeout(() => resolve("yay"), 5000));
         try {
             // Send user's diary to back-end
+            console.log(chosenDate)
             const res = await axiosInstance.post<DiaryDto>(`/diaries/user/${userId}/${chosenDate}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -133,11 +130,12 @@ const Input = () => {
             });
             // Handle response
             toast({
-                variant: "default",
+                variant: "success",
                 title: "Successfully Saved!",
                 description: "Your diary is saved"
             })
-
+            // Navigate to the diary page for the selected date
+            router.push(`/diary/${chosenDate}`)
         } catch (error: any) {
             if (axios.isAxiosError(error)) {
                 const axiosError = error as AxiosError<ErrorResponse>
@@ -149,11 +147,12 @@ const Input = () => {
             setErrorDialog(true);
         } finally {
             setIsLoading(false);
+            setOpen(false);
         }
     };
 
     return (
-        <div className="px-4 min-h-screen flex flex-col">
+        <div className="px-4 min-h-screen h-screen flex flex-col">
             <div className="mt-6">
                 <Button
                     className="bg-transparent rounded-full "
