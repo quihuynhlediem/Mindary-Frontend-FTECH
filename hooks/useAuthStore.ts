@@ -22,7 +22,6 @@ const useAuthStore = create<AuthStore>((set, get) => {
     let decryptKey: string | null = null;
 
     if (typeof window !== 'undefined') {
-        // Only access localStorage in the browser environment
         userId = Cookies.get('userId') || null;
         accessToken = Cookies.get('accessToken') || null;
         refreshToken = Cookies.get('refreshToken') || null;
@@ -51,12 +50,13 @@ const useAuthStore = create<AuthStore>((set, get) => {
         },
         clearAuthTokens: () => {
             if (typeof window !== 'undefined') {
-                localStorage.removeItem('userId');
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                localStorage.removeItem('salt')
+                Cookies.remove('userId');
+                Cookies.remove('accessToken');
+                Cookies.remove('refreshToken');
+                Cookies.remove('salt');
+                Cookies.remove('decryptKey'); // Also clean up decryptKey
             }
-            set({ userId: null, accessToken: null, refreshToken: null, salt: null });
+            set({ userId: null, accessToken: null, refreshToken: null, salt: null, decryptKey: null });
         },
         isAuthenticated: () => {
             return !!get().accessToken;

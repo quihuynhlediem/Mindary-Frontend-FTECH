@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Menu, X, Edit2 } from 'lucide-react';
 import { LoadingDots } from './LoadingDots';
+import Cookies from 'js-cookie';
 
 interface ChatAreaProps {
     conversation: Conversation;
@@ -74,7 +75,7 @@ export function ChatArea({ conversation, isMobile }: ChatAreaProps) {
     const handleSendMessage = async (content: string) => {
         if (!content.trim()) return;
 
-        const userId = localStorage.getItem('userId');
+        const userId = Cookies.get('userId');
         if (!userId) {
             window.location.href = '/login';
             return;
