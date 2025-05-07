@@ -5,7 +5,7 @@ import Calendar from '@/components/diary/Calendar';
 import DailyUserContent from '@/components/diary/DailyUserDiary';
 import useAuthStore from '@/hooks/useAuthStore';
 
-const page = () => {
+const Diary = () => {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
     const router = useRouter();
 
@@ -29,4 +29,4 @@ const page = () => {
     );
 }
 
-export default page;
+export default Diary;
