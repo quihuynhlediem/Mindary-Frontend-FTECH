@@ -67,16 +67,16 @@ const page = () => {
         }
     })
 
-//     useEffect(() => {
-//         if (errorMessage != null) {
-//             console.log(errorMessage)
-//             toast({
-//                 variant: "destructive",
-//                 title: "Error",
-//                 description: errorMessage
-//             })
-//         }
-//     }, [errorMessage])
+    //     useEffect(() => {
+    //         if (errorMessage != null) {
+    //             console.log(errorMessage)
+    //             toast({
+    //                 variant: "destructive",
+    //                 title: "Error",
+    //                 description: errorMessage
+    //             })
+    //         }
+    //     }, [errorMessage])
 
     const handleSignup = async (values: z.infer<typeof signupSchema>) => {
         setIsLoading(true)
@@ -322,3 +322,4 @@ const page = () => {
     )
 }
 
+export default page;

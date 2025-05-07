@@ -26,13 +26,21 @@ export default function ChatPage() {
     const router = useRouter();
     const isMobile = useMediaQuery("(max-width: 768px)");
 
+    const getCookie = (cookieName: string) => {
+        const cookies = document.cookie.split("; ");
+        const tokenCookie = cookies.find((cookie) =>
+            cookie.startsWith(`${cookieName}=`)
+        );
+        return tokenCookie ? tokenCookie.split("=")[1] : null;
+    };
+
     useEffect(() => {
         const checkAuth = () => {
-            const token = localStorage.getItem('accessToken');
-            const userId = localStorage.getItem('userId');
+            const token = getCookie('accessToken');
+            const userId = getCookie('userId');
 
             if (!token || !userId) {
-                router.push('/login');
+                // router.push('/login');
                 return false;
             }
             return true;
@@ -43,13 +51,13 @@ export default function ChatPage() {
 
             try {
                 setLoading(true);
-                const userId = localStorage.getItem('userId')!;
+                const userId = getCookie('userId')!;
                 const conversations = await chatService.getUserConversations(userId);
                 setConversations(conversations);
             } catch (error: any) {
                 console.error('Error fetching conversations:', error);
                 if (error.response?.status === 401) {
-                    router.push('/login');
+                    // router.push('/login');
                 } else {
                     handleError(error);
                 }
@@ -76,9 +84,9 @@ export default function ChatPage() {
     };
 
     const handleInitialMessage = async (message: string) => {
-        const userId = localStorage.getItem('userId');
+        const userId = getCookie("userId");
         if (!userId) {
-            router.push('/login');
+            // router.push('/login');
             return;
         }
 
@@ -112,7 +120,7 @@ export default function ChatPage() {
         } catch (error: any) {
             console.error('Error creating conversation:', error);
             if (error.response?.status === 401) {
-                router.push('/login');
+                // router.push('/login');
             } else {
                 handleError(error);
             }
