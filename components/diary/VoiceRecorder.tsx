@@ -58,8 +58,8 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onAudioChange }) => {
     };
 
     return (
-        <div className="mt-4">
-            <Label className="font-medium">Voice Memo</Label>
+        <div className="">
+            <Label className=" text-[18px] font-semibold">Voice Memo</Label>
 
             {audioUrl ? (
                 <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg mt-2">

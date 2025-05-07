@@ -1,14 +1,20 @@
-import React from 'react'
+"use client"
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation';
 import Calendar from '@/components/diary/Calendar';
 import DailyUserContent from '@/components/diary/DailyUserContent';
+import useAuthStore from '@/hooks/useAuthStore';
+import { format } from "date-fns";
 
-const Onboarding = () => {
-    return (
-        <div>
-            <Calendar />
-            <DailyUserContent />
-        </div>
-    );
-}
+const DiaryRedirect = () => {
+    const router = useRouter();
+    const today = format(new Date(), "yyyy-MM-dd");
 
-export default Onboarding;
+    useEffect(() => {
+        router.replace(`/diary/${today}`);
+    }, [router]);
+
+    return null;
+};
+
+export default DiaryRedirect;
