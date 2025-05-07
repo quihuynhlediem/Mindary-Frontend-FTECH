@@ -15,4 +15,4 @@ const DiaryRedirect = () => {
     return null;
 };
 
-export default Onboarding;
+export default DiaryRedirect;
