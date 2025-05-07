@@ -1,7 +1,8 @@
 import axios, { Axios, AxiosError } from "axios";
 import { AuthResponse } from "./app/types/diary";
 import { headers } from "next/headers";
-import useAuthStore from "./hooks/useAuthStore";
+import { refreshTokenAtom } from "./app/login/page";
+import { useAtomValue } from "jotai";
 
 // Module augmentation for InternalAxiosRequestConfig
 declare module 'axios' {
@@ -11,20 +12,20 @@ declare module 'axios' {
 }
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/api/v1"
-})
-
+    baseURL: "http://localhost:8080/api/v1",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
 const refreshAccessToken = async (refreshToken: string) => {
-    const setAuth = useAuthStore((state) => state.setAuthTokens)
-
     if (!refreshToken) {
         window.location.href = "/login"
         return null
     }
 
     try {
-        const res = await axios.post<AuthResponse>("http://localhost:8080/api/v1/auth/refresh-token",
+        const refreshResponse = await axios.post<AuthResponse>("http://localhost:8080/api/v1/auth/refresh-token",
             {}, // No body needed
             {
                 headers: {
@@ -32,7 +33,9 @@ const refreshAccessToken = async (refreshToken: string) => {
                 }
             })
 
-        if (res.status != 200) {
+        const newAccessToken = refreshResponse.data.accessToken
+
+        if (!newAccessToken) {
             localStorage.clear();
             window.location.href = "/login"
             return null;
@@ -40,13 +43,21 @@ const refreshAccessToken = async (refreshToken: string) => {
 
         setAuth(res.data.userId, res.data.accessToken, res.data.refreshToken, res.data.salt);
 
-        return res.data.refreshToken
+        return newAccessToken
     } catch (error) {
         localStorage.clear();
         window.location.href = "/login"
         return null;
     }
 }
+
+axiosInstance.interceptors.request.use((config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
 axiosInstance.interceptors.response.use(
     (response) => response,

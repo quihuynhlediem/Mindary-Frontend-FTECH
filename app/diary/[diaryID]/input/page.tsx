@@ -17,6 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import Lottie from "lottie-react";
+
+import ImageUpload from "@/components/diary/ImageUpload";
 import {
     Dialog,
     DialogContent,
@@ -32,12 +34,10 @@ import { UUID } from "crypto";
 import { DiaryFormData } from "@/app/types/diary";
 import warmSmile from "@/public/warm-smile.json";
 import loudlyCrying from "@/public/loudly-crying.json";
+import { useRouter } from "next/navigation";
+import { useSetAtom, useAtomValue, useAtom } from "jotai";
 import Loader from "@/components/general/Loader";
 import axiosInstance from "@/apiConfig";
-import ImageUploader from "@/components/diary/ImageUploader";
-import VoiceRecorder from "@/components/diary/VoiceRecorder";
-import useAuthStore from "@/hooks/useAuthStore";
-import useUserStore from "@/hooks/useUserStore";
 
 const formSchema = z.object({
     diary: z
@@ -52,7 +52,6 @@ const formSchema = z.object({
 const Input = () => {
     const [images, setImages] = useState<File[]>([]);
     const [audioUrl, setAudioUrl] = useState<Blob | null>(null);
-    const router = useRouter();
     const { push } = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
@@ -105,7 +104,6 @@ const Input = () => {
         // };
 
         let formData = new FormData();
-
         formData.append("diary", values.diary);
         formData.append("timezone", timezone)
 
@@ -115,123 +113,123 @@ const Input = () => {
             formData.append("ai", "no")
         }
 
-        if (values.audio) formData.append("audio", values.audio);
-        if (values.images) values.images.forEach((image) => formData.append("images", image))
+        let req = async () => {
 
-        // await new Promise((resolve) => setTimeout(() => resolve("yay"), 5000));
-        try {
-            // Send user's diary to back-end
-            console.log(chosenDate)
-            const res = await axiosInstance.post<DiaryDto>(`/diaries/user/${userId}/${chosenDate}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Authorization": `Bearer ${accessToken}`
-                },
-            });
-            // Handle response
-            toast({
-                variant: "success",
-                title: "Successfully Saved!",
-                description: "Your diary is saved"
-            })
-            // Navigate to the diary page for the selected date
-            router.push(`/diary/${chosenDate}`)
-        } catch (error: any) {
-            if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError<ErrorResponse>
-                if (axiosError.response?.data) {
-                    console.log(axiosError.response.data.message)
+            // await new Promise((resolve) => setTimeout(() => resolve("yay"), 5000));
+            try {
+                // Send user's diary to back-end
+                console.log(chosenDate)
+                const res = await axiosInstance.post<DiaryDto>(`/diaries/user/${userId}/${chosenDate}`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                });
+                // Handle response
+                toast({
+                    variant: "success",
+                    title: "Successfully Saved!",
+                    description: "Your diary is saved"
+                })
+                // Navigate to the diary page for the selected date
+                router.push(`/diary/${chosenDate}`)
+            } catch (error: any) {
+                if (axios.isAxiosError(error)) {
+                    const axiosError = error as AxiosError<ErrorResponse>
+                    if (axiosError.response?.data) {
+                        console.log(axiosError.response.data.message)
+                    }
                 }
+                setOpen(false);
+                setErrorDialog(true);
+            } finally {
+                setIsLoading(false);
+                setOpen(false);
             }
-            setOpen(false);
-            setErrorDialog(true);
-        } finally {
-            setIsLoading(false);
-            setOpen(false);
-        }
-    };
+        };
 
-    return (
-        <div className="px-4 min-h-screen h-screen flex flex-col">
-            <div className="mt-6">
-                <Button
-                    className="bg-transparent rounded-full "
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                        router.back()
-                    }}
-                >
-                    <X
-                        className="text-primary"
-                    />
-                </Button>
-            </div>
-            <h1 className="text-[32px] text-center font-bold text-primary">Your Diary</h1>
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col space-y-10 min-h-screen"
-                >
-                    <FormField
-                        control={form.control}
-                        name="diary"
-                        render={({ field }) => (
-                            <FormItem className="justify-center">
-                                <FormLabel className="text-[18px] font-semibold ">
-                                    Your today thoughts
-                                </FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="Today i felt..."
-                                        className="resize-none text-body-1 min-h-48 bg-primary-foreground"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+        return (
+            <div className="px-4 min-h-screen h-screen flex flex-col">
+                <div className="mt-6">
+                    <Button
+                        className="bg-transparent rounded-full "
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                            router.back()
+                        }}
+                    >
+                        <X
+                            className="text-primary"
+                        />
+                    </Button>
+                </div>
+                <h1 className="text-[32px] text-center font-bold text-primary">Your Diary</h1>
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="flex flex-col space-y-10 min-h-screen"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="diary"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xl font-semibold">
+                                        Tell us more about your day
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder="Today i felt..."
+                                            className="resize-none text-body-1 min-h-48 bg-primary-foreground"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField
-                        control={form.control}
-                        name="audio"
-                        render={({ field }) => (
-                            <FormItem>
-                                {/* <FormLabel className="text-xl font-semibold">
-                                    Upload your photos
-                                </FormLabel> */}
-                                <FormControl>
-                                    <VoiceRecorder
-                                        onAudioChange={field.onChange}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="audio"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xl font-semibold">
+                                        Upload your photos
+                                    </FormLabel>
+                                    <FormControl>
+                                        <VoiceRecorder
+                                            onAudioChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField
-                        control={form.control}
-                        name="images"
-                        render={({ field }) => (
-                            <FormItem>
-                                {/* <FormLabel className="text-xl font-semibold">
-                                    Upload your photos
-                                </FormLabel> */}
-                                <FormControl>
-                                    <ImageUploader
-                                        onImagesChange={field.onChange}
-                                        value={field.value || []}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="images"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xl font-semibold">
+                                        Upload your photos
+                                    </FormLabel>
+                                    <FormControl>
+                                        <ImageUpload
+                                            onChange={field.onChange}
+                                            value={field.value}
+                                            className="border-border rounded-lg"
+                                        />
+                                    </FormControl>{" "}
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    {/* AI Analysis Checkbox */}
-                    {/* <FormField
+                        {/* AI Analysis Checkbox */}
+                        {/* <FormField
                         control={form.control}
                         name="analysis"
                         render={({ field }) => (
@@ -253,60 +251,60 @@ const Input = () => {
                             </FormItem>
                         )}
                     /> */}
-                    {/* Align bottom */}
-                    <Button className="w-full rounded-full mt-4" type="submit">
-                        Save
-                    </Button>
-                </form>
-            </Form>
+                        {/* Align bottom */}
+                        <Button className="w-full" type="submit">
+                            Continue
+                        </Button>
+                    </form>
+                </Form>
 
-            {/* Dialog for analyzing */}
-            <Dialog open={open}>
-                <DialogContent className="p-4 max-w-[90dvw] rounded-lg">
-                    <DialogHeader>
-                        <div className="flex justify-center w-full">
-                            <Lottie
-                                className="size-36"
-                                animationData={warmSmile}
-                                loop={true}
-                            />
-                        </div>
-                        <DialogTitle className="flex justify-center gap-1 text-center">
-                            Analyzing
-                            <div className="relative top-2">
-                                <Loader />
+                {/* Dialog for analyzing */}
+                <Dialog open={open}>
+                    <DialogContent className="p-4 max-w-[90dvw] rounded-lg">
+                        <DialogHeader>
+                            <div className="flex justify-center w-full">
+                                <Lottie
+                                    className="size-36"
+                                    animationData={warmSmile}
+                                    loop={true}
+                                />
                             </div>
-                        </DialogTitle>
-                        <DialogDescription className="text-center">
-                            Please wait for a bit while we are trying to analyzing through
-                            your diary, it won't be long we promise 😉
-                        </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
+                            <DialogTitle className="flex justify-center gap-1 text-center">
+                                Analyzing
+                                <div className="relative top-2">
+                                    <Loader />
+                                </div>
+                            </DialogTitle>
+                            <DialogDescription className="text-center">
+                                Please wait for a bit while we are trying to analyzing through
+                                your diary, it won't be long we promise 😉
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
 
-            {/* Dialog for error */}
-            <Dialog open={errorDialog} onOpenChange={setErrorDialog}>
-                <DialogContent className="p-4 max-w-[90dvw] rounded-lg">
-                    <DialogHeader>
-                        <div className="flex justify-center w-full">
-                            <Lottie
-                                className="size-36"
-                                animationData={loudlyCrying}
-                                loop={true}
-                            />
-                        </div>
-                        <DialogTitle className="flex justify-center gap-1 text-center">
-                            Oops
-                        </DialogTitle>
-                        <DialogDescription className="text-center">
-                            {errorMessage}
-                        </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
-        </div>
-    );
-};
+                {/* Dialog for error */}
+                <Dialog open={errorDialog} onOpenChange={setErrorDialog}>
+                    <DialogContent className="p-4 max-w-[90dvw] rounded-lg">
+                        <DialogHeader>
+                            <div className="flex justify-center w-full">
+                                <Lottie
+                                    className="size-36"
+                                    animationData={loudlyCrying}
+                                    loop={true}
+                                />
+                            </div>
+                            <DialogTitle className="flex justify-center gap-1 text-center">
+                                Oops
+                            </DialogTitle>
+                            <DialogDescription className="text-center">
+                                {errorMessage}
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+            </div>
+        );
+    };
 
-export default Input;
+    export default Input;

@@ -86,7 +86,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onAudioChange }) => {
                         </>
                     ) : (
                         <>
-                            <Mic size={20} className="text-primary" />
+                            <Mic size={20} />
                             <span>Tap to Record</span>
                         </>
                     )}
