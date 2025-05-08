@@ -24,7 +24,7 @@ const page = () => {
     return (
         <div className='relative min-h-full max-w-screen w-screen h-screen px-4 py-14 bg-primary-foreground space-y-6'>
             <Calendar />
-            <DailyUserContent />
+            {/* <DailyUserContent /> */}
         </div>
     );
 }
