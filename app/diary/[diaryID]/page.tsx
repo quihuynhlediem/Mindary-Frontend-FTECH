@@ -22,7 +22,7 @@ const Diary = () => {
     }
 
     return (
-        <div className='min-h-full px-4 py-14 bg-primary-foreground'>
+        <div className='relative min-h-full max-w-screen w-screen h-screen px-4 py-14 bg-primary-foreground space-y-6'>
             <Calendar />
             {/* <DailyUserContent /> */}
         </div>

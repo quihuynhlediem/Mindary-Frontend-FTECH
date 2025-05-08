@@ -225,14 +225,27 @@ const DailyUserContent = () => {
                 }
             );
             const data = diaryResponse.data;
-            const images: DiaryImageDto[] = diaryResponse.data.images;
+            const diaryId: string = data.id
 
             // Decrypt diary content
             const decryptedText = await decryptDiaryContent(data, decryptKey);
 
             // Store decrypted diary
             addDiary(format(new Date(data.createdAt), "yyyy-MM-dd"), decryptedText);
-            addImage(format(new Date(data.createdAt), "yyyy-MM-dd"), images);
+
+            // Get images
+            const diaryImagesResponse = await axiosInstance.get<DiaryImageDto[]>(
+                `/diaries/${diaryId}/user/${userId}/images`,
+                {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                }
+            );
+
+            const images: DiaryImageDto[] = diaryImagesResponse.data
+            console.log(images.length)
+            if (images.length > 0) {
+                addImage(format(new Date(data.createdAt), "yyyy-MM-dd"), images);
+            }
         } catch (error) {
             let message = "Failed to fetch or decrypt diary.";
             if (axios.isAxiosError(error)) {
@@ -271,136 +284,6 @@ const DailyUserContent = () => {
         fetchDiary();
     }, [fetchDiary]);
 
-    // // Fetch diary entry
-    // useEffect(() => {
-    //     // if (!password) return; // Wait for password and date
-    //     const fetchDiary = async () => {
-    //         setIsLoading(true);
-    //         setErrorMessage("");
-
-    //         try {
-    //             if (decryptKey == null && password) {
-    //                 // Fetch user encryption data
-    //                 const userResponse = await axiosInstance.get<UserEncryptionData>(
-    //                     `/customers/${userId}`,
-    //                     {
-    //                         headers: {
-    //                             "Authorization": `Bearer ${accessToken}`
-    //                         }
-    //                     }
-    //                 );
-    //                 const { encryptedPrivateKey, privateKeyIv } = userResponse.data;
-
-    //                 // Decrypt private key locally
-    //                 const iv = Uint8Array.from(atob(privateKeyIv), c => c.charCodeAt(0));
-    //                 const encryptedPrivateKeyBytes = Uint8Array.from(atob(encryptedPrivateKey), c => c.charCodeAt(0));
-
-    //                 // Pad or truncate password to 32 bytes
-    //                 const passwordBytes = new TextEncoder().encode(password);
-    //                 const keyBytes = new Uint8Array(32);
-    //                 for (let i = 0; i < 32; i++) {
-    //                     keyBytes[i] = i < passwordBytes.length ? passwordBytes[i] : 0;
-    //                 }
-
-    //                 const privateAESKey = await crypto.subtle.importKey(
-    //                     "raw",
-    //                     keyBytes,
-    //                     { name: "AES-GCM" },
-    //                     false,
-    //                     ["decrypt"]
-    //                 );
-
-    //                 let privateKeyBytes;
-    //                 try {
-    //                     privateKeyBytes = await crypto.subtle.decrypt(
-    //                         { name: "AES-GCM", iv },
-    //                         privateAESKey,
-    //                         encryptedPrivateKeyBytes
-    //                     );
-    //                 } catch (e) {
-    //                     throw new Error("Invalid password");
-    //                 }
-    //                 const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKeyBytes)));
-    //                 console.log("privateKeyBase64: " + privateKeyBase64)
-    //                 setDecryptKey(privateKeyBase64)
-    //             }
-
-    //             // Fetch diary metadata
-    //             const diaryResponse = await axiosInstance.get<DiaryDto>(
-    //                 `/diaries/user/${userId}/${chosenDate}`,
-    //                 {
-    //                     headers: {
-    //                         "Authorization": `Bearer ${accessToken}`
-    //                     }
-    //                 }
-    //             );
-    //             const { content, createdAt, aesKey, aesIv } = diaryResponse.data;
-
-    //             // // Request AES key decryption
-    //             const aesKeyResponse = await axiosInstance.post(
-    //                 `/diaries/user/${userId}/decrypt-aes-key`,
-    //                 {
-    //                     encryptedAESKey: aesKey,
-    //                     privateKey: useAuthStore.getState().decryptKey
-    //                 },
-    //                 {
-    //                     headers: {
-    //                         "Content-Type": "application/json",
-    //                         "Authorization": `Bearer ${accessToken}`
-    //                     }
-    //                 }
-    //             );
-    //             const diaryAESKeyBase64 = aesKeyResponse.data;
-
-    //             // Decrypt diary content locally
-    //             const aesKeyBytes = Uint8Array.from(atob(diaryAESKeyBase64), c => c.charCodeAt(0));
-    //             const diaryAesKey = await crypto.subtle.importKey(
-    //                 "raw",
-    //                 aesKeyBytes,
-    //                 { name: "AES-GCM" },
-    //                 false,
-    //                 ["decrypt"]
-    //             );
-    //             const aesIvBytes = Uint8Array.from(atob(aesIv), c => c.charCodeAt(0));
-    //             const encryptedContentBytes = Uint8Array.from(atob(content), c => c.charCodeAt(0));
-
-    //             const decryptedContentBytes = await crypto.subtle.decrypt(
-    //                 { name: "AES-GCM", iv: aesIvBytes },
-    //                 diaryAesKey,
-    //                 encryptedContentBytes
-    //             );
-    //             const decryptedText = new TextDecoder().decode(decryptedContentBytes);
-    //             console.log(decryptedText)
-
-    //             // Store diary with media
-    //             addDiary(format(createdAt, "yyyy-MM-dd"), decryptedText);
-    //         } catch (error: any) {
-    //             console.error("Fetch diary error:", error);
-    //             if (axios.isAxiosError(error)) {
-    //                 const axiosError = error as AxiosError<ErrorResponse>;
-    //                 if (axiosError.response?.data) {
-    //                     setErrorMessage(axiosError.response.data.message);
-    //                 } else {
-    //                     setErrorMessage("Failed to fetch diary. Please check your password.");
-    //                 }
-    //             } else {
-    //                 setErrorMessage(error.message || "An unexpected error occurred.");
-    //             }
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     };
-
-    //     fetchDiary();
-    // }, [chosenDate, password, userId, accessToken, addDiary]);
-
-    // if (isLoading) {
-    //     return (
-    //         <div className="flex justify-center items-center h-full">
-    //             <Loader />
-    //         </div>
-    //     );
-    //}
     if (isLoading) {
         return (
             <div className="flex justify-center items-center my-48">
@@ -410,7 +293,7 @@ const DailyUserContent = () => {
     }
 
     return (
-        <div className="p-2">
+        <div className="p-2 flex flex-col">
             {errorMessage && (
                 <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
                     {errorMessage}
@@ -428,10 +311,11 @@ const DailyUserContent = () => {
                 onClose={() => setIsPasswordModalOpen(false)}
             />
             {diaries[chosenDate!] ? (
-                <div className="p-4 rounded-lg bg-white">
-                    <p>{diaries[chosenDate!]}</p>
-                    {diaries[chosenDate!] ? (
+                <div className="p-4 rounded-lg bg-white flex flex-col space-y-6">
+                    <div className="break-words">{diaries[chosenDate!]}</div>
+                    {diaryImages[chosenDate!] ? (
                         <ImageViewer diaryImages={diaryImages[chosenDate!]} />
+                        // <div></div>
                     ) : (
                         <div></div>
                     )}
