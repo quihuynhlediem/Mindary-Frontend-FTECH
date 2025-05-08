@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import animate from "tailwindcss-animate";
 
 const config: Config = {
   darkMode: ["class"],
@@ -66,9 +65,13 @@ const config: Config = {
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+      },
+      fontFamily: {
+        sans: ['Urbanist', ...require('tailwindcss/defaultTheme').fontFamily.sans],
+        urbanist: ['Urbanist', ...require('tailwindcss/defaultTheme').fontFamily.sans],
       }
     },
   },
-  plugins: [animate],
+  plugins: [require("tailwindcss-animate")],
 };
 export default config;
