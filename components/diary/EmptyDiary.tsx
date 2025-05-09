@@ -3,13 +3,12 @@ import React from "react";
 import loudlyCrying from "@/public/loudly-crying.json";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import { Router } from "lucide-react";
-import { selectedDateAtom } from "./Calendar";
-import { useAtomValue } from "jotai";
+import useUserStore from "@/hooks/useUserStore";
 
 const EmptyDiary = () => {
 	const router = useRouter()
-	const chosenDate = useAtomValue(selectedDateAtom);
+	const selectedDate = useUserStore((state) => state.selectedDate);
+	// const setSelectedDate = useUserStore((state) => state.setSelectedDate);
 	return (
 		<main className="grid min-h-full place-items-center bg-white px-6 py-12 my-auto sm:py-32 lg:px-8">
 			<div className="text-center flex flex-col space-y-6">
@@ -28,7 +27,7 @@ const EmptyDiary = () => {
 				<p className="text-base leading-7 text-gray-600">
 					You have not written anything here yet!
 				</p>
-				<Button className="" type="button" onClick={() => router.push(`/diary/${chosenDate}/input`)}>
+				<Button className="" type="button" onClick={() => router.push(`/diary/${selectedDate}/input`)}>
 					Start Writing
 				</Button>
 			</div>
