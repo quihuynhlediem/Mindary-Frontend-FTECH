@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAtomValue } from "jotai";
-import { selectedDateAtom } from "./Calendar";
-import { diaryAtom } from "./DailyUserContent";
+import { diaryAtom } from "./DailyUserDiary";
 
 enum Mood {
     Down = 1,

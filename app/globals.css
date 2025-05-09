@@ -21,6 +21,7 @@ body {
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
     --primary: 188 49% 66%;
+    --primary-hover: 188 49% 56%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -30,6 +31,8 @@ body {
     --accent-foreground: 0 0% 9%;
     --destructive: 347 77% 72%;
     --destructive-foreground: 0 0% 98%;
+    --success: 152 58% 45%;
+    --success-foreground: 152 90% 95%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;

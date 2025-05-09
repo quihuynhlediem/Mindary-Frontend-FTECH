@@ -6,14 +6,17 @@ import sadEmoji from "@/public/emoji/sad.json";
 import okayEmoji from "@/public/emoji/okay.json";
 import happyEmoji from "@/public/emoji/happy.json";
 import happiestEmoji from "@/public/emoji/happiest.json";
-import { useAtomValue } from "jotai";
-import { selectedDateAtom } from "@/components/diary/Calendar";
-import { diaryAtom } from "@/components/diary/DailyUserContent";
+// import { useAtomValue } from "jotai";
+// import { diaryAtom } from "@/components/diary/DailyUserDiary";
+
+import { Diaries } from "@/app/types/diary";
+import useUserStore from "@/hooks/useUserStore";
 
 const AnimatedEmoji = () => {
-    const diary = useAtomValue(diaryAtom)!;
+    const diary: Diaries = useUserStore((state) => state.diaries)
+    const chosenDate: string | null = useUserStore((state) => state.selectedDate)
 
-    const moodRating = diary.data[0].moodObjects[0].emotionLevel;
+    const moodRating = diary[chosenDate!];
 
     const getEmojiAnimation = (rating: string) => {
         switch (rating) {
@@ -35,7 +38,7 @@ const AnimatedEmoji = () => {
     const defaultOptions = {
         loop: false,
         autoplay: true,
-        animationData: getEmojiAnimation(moodRating),
+        animationData: getEmojiAnimation(moodRating!),
         rendererSettings: {
             preserveAspectRatio: "xMidYMid slice",
         },
