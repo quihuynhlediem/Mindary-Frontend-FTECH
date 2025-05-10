@@ -1,9 +1,7 @@
 import type { Config } from "tailwindcss";
-import animate from "tailwindcss-animate";
-import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
-  darkMode: "class",
+  darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,7 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#F9FAFB",
+        background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -23,12 +21,12 @@ const config: Config = {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "#7EC8D3",
+          DEFAULT: "#7ec8d3",
           foreground: "hsl(var(--primary-foreground))",
           hover: "hsl(var(--primary-hover))",
         },
         secondary: {
-          DEFAULT: "#00A5E3",
+          DEFAULT: "#00a5e3",
           foreground: "hsl(var(--secondary-foreground))",
         },
         muted: {
@@ -40,7 +38,7 @@ const config: Config = {
           foreground: "hsl(var(--accent-foreground))",
         },
         destructive: {
-          DEFAULT: "#F784AD",
+          DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         success: {
@@ -71,13 +69,9 @@ const config: Config = {
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
-      },
-      fontFamily: {
-        sans: ['Urbanist', ...defaultTheme.fontFamily.sans],
-        urbanist: ['Urbanist', ...defaultTheme.fontFamily.sans],
       }
     },
   },
-  plugins: [animate],
+  plugins: [require("tailwindcss-animate")],
 };
 export default config;
