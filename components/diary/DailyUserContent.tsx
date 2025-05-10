@@ -7,12 +7,14 @@ import StatusMessage from "./StatusMessage";
 import ReasonSection from "./ReasonSection";
 import Tips from "./Tips";
 import Loader from "../general/Loader";
+import { Pencil } from 'lucide-react';
 import axios, { AxiosError } from "axios";
 import { ErrorResponse } from "@/app/types/diary";
 import axiosInstance from "@/apiConfig";
 import useUserStore from "@/hooks/useUserStore";
 import useAuthStore from "@/hooks/useAuthStore";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
 // Dynamically import EmptyDiary with SSR disabled
 const EmptyDiary = dynamic(() => import("./EmptyDiary"), { ssr: false });
@@ -49,6 +51,7 @@ const DailyUserContent: React.FC = () => {
     const [diary, setDiary] = useState<DiaryDto | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const router = useRouter();
 
     const fetchDiary = useCallback(async () => {
         if (!userId || !accessToken || !selectedDate) {
@@ -98,6 +101,11 @@ const DailyUserContent: React.FC = () => {
         );
     }
 
+    const handleViewDiary = () => {
+        const currentDate = selectedDate;
+        router.replace(`/diary/${currentDate}/input`);
+    }
+
     if (errorMessage) {
         return (
             <div className="text-center py-4 text-red-500">
@@ -118,7 +126,12 @@ const DailyUserContent: React.FC = () => {
 
     return (
         <div className="text-center py-4">
-            <AnimatedEmoji/>
+            <div className="flex justify-end items-center">
+                <button onClick={handleViewDiary} className="flex justify-center items-center gap-1.5 bg-[#E6F4F1] border-[#7EC8D3] rounded-lg border-2 border-solid p-1 cursor-pointer">
+                    <Pencil className="w-4" /> <span className="text-center justify-start text-black text-sm font-semibold tracking-wide">View Diary</span>
+                </button>
+            </div>
+            <AnimatedEmoji />
             <StatusMessage result={diary} />
             <PersonalizedMessage result={diary} />
             <ReasonSection result={diary} />
