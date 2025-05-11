@@ -1,5 +1,5 @@
-export interface MeditationDto {
-    id: string;
+export interface MeditationProp {
+    _id: string;
     title: string;
     author: string;
     tags: string[];
@@ -7,6 +7,11 @@ export interface MeditationDto {
     description: string;
     transcripts: string;
     picture_url: string;
-    widget_url: string;
-    image: string;
+    media_url: string;
 }
+
+export interface Prop {
+    meditation: MeditationProp;
+    index: number;
+}
+
