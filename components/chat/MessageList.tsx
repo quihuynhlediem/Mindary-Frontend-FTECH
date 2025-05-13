@@ -8,7 +8,7 @@ interface MessageListProps {
 
 export function MessageList({ messages }: MessageListProps) {
     return (
-        <div className="chat-messages">
+        <div className="flex flex-col space-y-4">
             {messages.map((message) => (
                 <div
                     key={message.id}

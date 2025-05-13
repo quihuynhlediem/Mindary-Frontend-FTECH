@@ -17,8 +17,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import Lottie from "lottie-react";
-
-import ImageUpload from "@/components/diary/ImageUpload";
 import {
     Dialog,
     DialogContent,
@@ -34,10 +32,12 @@ import { UUID } from "crypto";
 import { DiaryFormData } from "@/app/types/diary";
 import warmSmile from "@/public/warm-smile.json";
 import loudlyCrying from "@/public/loudly-crying.json";
-import { useRouter } from "next/navigation";
-import { useSetAtom, useAtomValue, useAtom } from "jotai";
 import Loader from "@/components/general/Loader";
 import axiosInstance from "@/apiConfig";
+import ImageUploader from "@/components/diary/ImageUploader";
+import VoiceRecorder from "@/components/diary/VoiceRecorder";
+import useAuthStore from "@/hooks/useAuthStore";
+import useUserStore from "@/hooks/useUserStore";
 
 const formSchema = z.object({
     diary: z
@@ -52,6 +52,7 @@ const formSchema = z.object({
 const Input = () => {
     const [images, setImages] = useState<File[]>([]);
     const [audioUrl, setAudioUrl] = useState<Blob | null>(null);
+    const router = useRouter();
     const { push } = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
@@ -306,5 +307,6 @@ const Input = () => {
             </div>
         );
     };
+}
 
-    export default Input;
+export default Input;

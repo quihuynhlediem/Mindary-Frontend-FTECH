@@ -1,6 +1,14 @@
 import axiosInstance from '@/apiConfig';
 import { ChatRequest, Conversation, ChatMessage } from '@/app/types/chat';
 
+const getCookie = (cookieName: string) => {
+    const cookies = document.cookie.split("; ");
+    const tokenCookie = cookies.find((cookie) =>
+        cookie.startsWith(`${cookieName}=`)
+    );
+    return tokenCookie ? tokenCookie.split("=")[1] : null;
+};
+
 const handleAuthError = (error: any) => {
     if (error.response?.status === 401) {
         // axios interceptor handle token refresh
@@ -10,7 +18,7 @@ const handleAuthError = (error: any) => {
 };
 
 const getAuthHeaders = () => {
-    const token = localStorage.getItem('accessToken');
+    const token = getCookie('accessToken');
     if (!token) {
         window.location.href = '/login';
         throw new Error('No access token found');
@@ -100,11 +108,7 @@ export const chatService = {
     // Update conversation title
     updateConversationTitle: async (conversationId: string, title: string) => {
         try {
-            console.log('Updating title for conversation:', conversationId);
-            console.log('New title:', title);
-            console.log('Token:', localStorage.getItem('accessToken'));
-
-            const response = await axiosInstance.post<Conversation>(
+            const response = await axiosInstance.patch<Conversation>(
                 `/chat/conversations/${conversationId}/title`,
                 { title },
                 {
@@ -114,19 +118,11 @@ export const chatService = {
                     }
                 }
             );
-
             if (!response.data) {
                 throw new Error('No data received from server');
             }
-
-            console.log('Server response:', response.data);
             return response.data;
         } catch (error: any) {
-            console.error('Title update error:', {
-                status: error.response?.status,
-                data: error.response?.data,
-                message: error.message
-            });
             return handleAuthError(error);
         }
     }

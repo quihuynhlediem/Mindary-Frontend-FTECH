@@ -26,13 +26,21 @@ export default function ChatPage() {
     const router = useRouter();
     const isMobile = useMediaQuery("(max-width: 768px)");
 
+    const getCookie = (cookieName: string) => {
+        const cookies = document.cookie.split("; ");
+        const tokenCookie = cookies.find((cookie) =>
+            cookie.startsWith(`${cookieName}=`)
+        );
+        return tokenCookie ? tokenCookie.split("=")[1] : null;
+    };
+
     useEffect(() => {
         const checkAuth = () => {
-            const token = localStorage.getItem('accessToken');
-            const userId = localStorage.getItem('userId');
+            const token = getCookie('accessToken');
+            const userId = getCookie('userId');
 
             if (!token || !userId) {
-                router.push('/login');
+                // router.push('/login');
                 return false;
             }
             return true;
@@ -43,13 +51,13 @@ export default function ChatPage() {
 
             try {
                 setLoading(true);
-                const userId = localStorage.getItem('userId')!;
+                const userId = getCookie('userId')!;
                 const conversations = await chatService.getUserConversations(userId);
                 setConversations(conversations);
             } catch (error: any) {
                 console.error('Error fetching conversations:', error);
                 if (error.response?.status === 401) {
-                    router.push('/login');
+                    // router.push('/login');
                 } else {
                     handleError(error);
                 }
@@ -76,9 +84,9 @@ export default function ChatPage() {
     };
 
     const handleInitialMessage = async (message: string) => {
-        const userId = localStorage.getItem('userId');
+        const userId = getCookie("userId");
         if (!userId) {
-            router.push('/login');
+            // router.push('/login');
             return;
         }
 
@@ -112,7 +120,7 @@ export default function ChatPage() {
         } catch (error: any) {
             console.error('Error creating conversation:', error);
             if (error.response?.status === 401) {
-                router.push('/login');
+                // router.push('/login');
             } else {
                 handleError(error);
             }
@@ -155,6 +163,7 @@ export default function ChatPage() {
 
     const handleBackToList = () => {
         setCurrentConversation(null);
+        setIsCreatingChat(false);
     };
 
     if (loading) {
@@ -165,13 +174,12 @@ export default function ChatPage() {
         );
     }
 
-    // On mobile, show either conversation list or chat area
+    // show either conversation list or chat area
     if (isMobile) {
         if (!currentConversation && !isCreatingChat) {
-            // Show conversation list on mobile
             return (
-                <div className="flex flex-col h-screen p-4 bg-background">
-                    <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col bg-background" style={{ height: 'calc(100vh - 4rem)' }}>
+                    <div className="flex items-center justify-between mb-4 p-4">
                         <h1 className="text-2xl font-bold">Chat</h1>
                         <Button
                             onClick={handleNewChat}
@@ -181,9 +189,8 @@ export default function ChatPage() {
                             New Chat
                         </Button>
                     </div>
-
-                    <div className="relative mb-4">
-                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="relative mb-4 px-4">
+                        <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search conversations..."
                             value={searchQuery}
@@ -191,8 +198,7 @@ export default function ChatPage() {
                             className="pl-8"
                         />
                     </div>
-
-                    <div className="flex-1 overflow-y-auto custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
                         <ConversationList
                             conversations={filteredConversations}
                             currentConversation={currentConversation}
@@ -206,10 +212,9 @@ export default function ChatPage() {
                 </div>
             );
         }
-
         // Show chat area on mobile
         return (
-            <div className="flex flex-col h-screen bg-background">
+            <div className="flex flex-col bg-background" style={{ height: 'calc(100vh - 4rem)' }}>
                 <div className="flex items-center px-4 py-3 border-b bg-card/50 backdrop-blur">
                     <Button
                         variant="ghost"
@@ -223,7 +228,6 @@ export default function ChatPage() {
                         {isCreatingChat ? "New Chat" : currentConversation?.title}
                     </h1>
                 </div>
-
                 {isCreatingChat ? (
                     <div className="flex-1 flex flex-col items-center justify-center p-4">
                         <div className="w-full max-w-md space-y-4">
@@ -253,10 +257,10 @@ export default function ChatPage() {
 
     // Desktop view remains unchanged
     return (
-        <div className="chat-container">
-            <div className="chat-sidebar">
-                <div className="p-4 space-y-4">
-                    <div className="flex items-center justify-between">
+        <div className="flex w-full bg-background" style={{ height: 'calc(100vh - 4rem)' }}>
+            <div className="w-[340px] min-w-[260px] max-w-xs border-r bg-white/80 dark:bg-card/80 flex-shrink-0 flex flex-col h-full">
+                <div className="sticky top-0 z-10 bg-white/80 dark:bg-card/80 p-4 pb-2 border-b">
+                    <div className="flex items-center justify-between mb-2">
                         <h1 className="text-2xl font-bold">Chat</h1>
                         <Button
                             onClick={handleNewChat}
@@ -266,7 +270,6 @@ export default function ChatPage() {
                             New Chat
                         </Button>
                     </div>
-
                     <div className="relative">
                         <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -276,7 +279,8 @@ export default function ChatPage() {
                             className="pl-8"
                         />
                     </div>
-
+                </div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
                     <ConversationList
                         conversations={filteredConversations}
                         currentConversation={currentConversation}
@@ -288,8 +292,7 @@ export default function ChatPage() {
                     />
                 </div>
             </div>
-
-            <div className="chat-main">
+            <div className="flex-1 flex flex-col h-full overflow-hidden">
                 {isCreatingChat ? (
                     <div className="flex-1 flex flex-col items-center justify-center p-4">
                         <div className="w-full max-w-md space-y-4">
