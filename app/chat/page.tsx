@@ -261,8 +261,8 @@ export default function ChatPage() {
 
     // Desktop view remains unchanged
     return (
-        <div className="chat-container">
-            <div className="chat-sidebar">
+        <div className="flex h-screen w-full bg-background">
+            <div className="w-[340px] min-w-[260px] max-w-xs border-r bg-white/80 dark:bg-card/80 flex-shrink-0 flex flex-col h-full overflow-y-auto">
                 <div className="p-4 space-y-4">
                     <div className="flex items-center justify-between">
                         <h1 className="text-2xl font-bold">Chat</h1>
@@ -297,7 +297,7 @@ export default function ChatPage() {
                 </div>
             </div>
 
-            <div className="chat-main">
+            <div className="flex-1 flex flex-col h-full overflow-hidden">
                 {isCreatingChat ? (
                     <div className="flex-1 flex flex-col items-center justify-center p-4">
                         <div className="w-full max-w-md space-y-4">

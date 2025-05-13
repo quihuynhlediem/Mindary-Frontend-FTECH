@@ -204,62 +204,60 @@ export function ChatArea({ conversation, isMobile }: ChatAreaProps) {
     };
 
     return (
-        <div className="chat-container">
-            <div className="chat-main">
-                {!isMobile && (
-                    <div className="chat-header">
-                        <div className="flex items-center gap-4 flex-1">
-                            {isEditingTitle ? (
-                                <div className="flex items-center gap-2 flex-1">
-                                    <Input
-                                        ref={titleInputRef}
-                                        value={newTitle}
-                                        onChange={(e) => setNewTitle(e.target.value)}
-                                        onKeyDown={handleTitleKeyDown}
-                                        onBlur={handleTitleBlur}
-                                        className="max-w-md text-xl font-semibold"
-                                        autoFocus
-                                    />
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2 flex-1">
-                                    <h2 className="text-xl font-semibold">{conversation.title}</h2>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => setIsEditingTitle(true)}
-                                        className="hover:bg-[#7EC8D3]/10"
-                                    >
-                                        <Edit2 className="h-4 w-4 text-[#7EC8D3]" />
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                <div ref={messageContainerRef} className="chat-messages custom-scrollbar">
-                    {loading ? (
-                        <div className="flex-1 flex items-center justify-center">
-                            <div className="text-gray-500">Loading messages...</div>
+        <div className={"flex flex-col h-full min-h-0 w-full bg-background/80" + (isMobile ? '' : ' p-0') + " rounded-xl shadow-lg overflow-hidden"} style={{ height: '100%' }}>
+            {!isMobile && (
+                <div className="flex items-center gap-4 flex-shrink-0 h-[72px] px-8 border-b" style={{ minHeight: '72px' }}>
+                    {isEditingTitle ? (
+                        <div className="flex items-center gap-2 flex-1">
+                            <Input
+                                ref={titleInputRef}
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                onKeyDown={handleTitleKeyDown}
+                                onBlur={handleTitleBlur}
+                                className="max-w-md text-xl font-semibold"
+                                autoFocus
+                            />
                         </div>
                     ) : (
-                        <>
-                            <MessageList messages={messages} />
-                            {isAiResponding && (
-                                <div className="flex justify-start">
-                                    <div className="max-w-[70%] rounded-lg p-4 bg-card border shadow-sm">
-                                        <LoadingDots />
-                                    </div>
-                                </div>
-                            )}
-                        </>
+                        <div className="flex items-center gap-2 flex-1">
+                            <h2 className="text-2xl font-bold text-[#212429]">{conversation.title}</h2>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsEditingTitle(true)}
+                                className="hover:bg-[#7EC8D3]/10"
+                            >
+                                <Edit2 className="h-4 w-4 text-[#7EC8D3]" />
+                            </Button>
+                        </div>
                     )}
                 </div>
+            )}
 
-                <div className="chat-input-container">
-                    <MessageInput onSend={handleSendMessage} disabled={sending} />
-                </div>
+            {/* Message List fills available space */}
+            <div ref={messageContainerRef} className="flex-1 min-h-0 overflow-y-auto px-8 py-6 custom-scrollbar bg-transparent">
+                {loading ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <div className="text-gray-500">Loading messages...</div>
+                    </div>
+                ) : (
+                    <>
+                        <MessageList messages={messages} />
+                        {isAiResponding && (
+                            <div className="flex justify-start">
+                                <div className="max-w-[70%] rounded-lg p-4 bg-card border shadow-sm">
+                                    <LoadingDots />
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+
+            {/* Input fixed at bottom */}
+            <div className="sticky bottom-0 left-0 w-full bg-background/80 pt-2 pb-4 px-8 z-10 border-t">
+                <MessageInput onSend={handleSendMessage} disabled={sending} />
             </div>
         </div>
     );
