@@ -76,7 +76,7 @@ const PasswordModal: React.FC<{
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-primary text-white p-2 rounded hover:bg-primary-hover"
+                            className="bg-primary-hover text-white p-2 rounded hover:bg-primary-hover"
                         >
                             Submit
                         </Button>

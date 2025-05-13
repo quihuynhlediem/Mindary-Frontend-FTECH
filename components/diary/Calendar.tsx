@@ -70,7 +70,7 @@ const Calendar = () => {
                                 ? "bg-gray-100 text-black cursor-not-allowed"
                                 : "cursor-pointer"
                                 } ${dayKey === selectedDate && !isFuture
-                                    ? "bg-primary font-bold text-white"
+                                    ? "bg-primary-hover font-bold text-white"
                                     : " text-black font-bold"
                                 } ${dayKey !== selectedDate && !isFuture && "hover:bg-gray-300"}`}
                         >
