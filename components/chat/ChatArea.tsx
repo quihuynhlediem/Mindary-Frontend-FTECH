@@ -205,7 +205,7 @@ export function ChatArea({ conversation, isMobile }: ChatAreaProps) {
     };
 
     return (
-        <div className={"flex flex-col h-full min-h-0 w-full bg-background/80" + (isMobile ? '' : ' p-0') + " rounded-xl shadow-lg overflow-hidden"} style={{ height: '100%' }}>
+        <div className={"flex flex-col min-h-0 w-full bg-background/80" + (isMobile ? '' : ' p-0') + " rounded-xl shadow-lg overflow-hidden"} style={{ height: 'calc(100vh - 4rem)' }}>
             <div className={isMobile ? "flex items-center justify-between flex-shrink-0 h-[56px] px-4 border-b bg-white/90" : "flex items-center justify-between flex-shrink-0 h-[72px] px-8 border-b"} style={{ minHeight: isMobile ? '56px' : '72px' }}>
                 <div className="flex items-center gap-2 flex-1">
                     {isEditingTitle ? (
