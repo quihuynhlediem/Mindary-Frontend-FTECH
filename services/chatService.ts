@@ -108,11 +108,7 @@ export const chatService = {
     // Update conversation title
     updateConversationTitle: async (conversationId: string, title: string) => {
         try {
-            console.log('Updating title for conversation:', conversationId);
-            console.log('New title:', title);
-            console.log('Token:', getCookie('accessToken'));
-
-            const response = await axiosInstance.post<Conversation>(
+            const response = await axiosInstance.patch<Conversation>(
                 `/chat/conversations/${conversationId}/title`,
                 { title },
                 {
@@ -122,19 +118,11 @@ export const chatService = {
                     }
                 }
             );
-
             if (!response.data) {
                 throw new Error('No data received from server');
             }
-
-            console.log('Server response:', response.data);
             return response.data;
         } catch (error: any) {
-            console.error('Title update error:', {
-                status: error.response?.status,
-                data: error.response?.data,
-                message: error.message
-            });
             return handleAuthError(error);
         }
     }

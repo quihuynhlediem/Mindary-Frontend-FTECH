@@ -1,6 +1,7 @@
 export interface ChatRequest {
     userId: string;     // UUID format
     message: string;    // Non-empty string
+    mode?: 'therapist' | 'homie'; // Optional mode for therapist/homie
 }
 
 export interface Conversation {

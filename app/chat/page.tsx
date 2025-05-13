@@ -163,6 +163,7 @@ export default function ChatPage() {
 
     const handleBackToList = () => {
         setCurrentConversation(null);
+        setIsCreatingChat(false);
     };
 
     if (loading) {
@@ -173,10 +174,9 @@ export default function ChatPage() {
         );
     }
 
-    // On mobile, show either conversation list or chat area
+    // show either conversation list or chat area
     if (isMobile) {
         if (!currentConversation && !isCreatingChat) {
-            // Show conversation list on mobile
             return (
                 <div className="flex flex-col h-screen p-4 bg-background">
                     <div className="flex items-center justify-between mb-4">
