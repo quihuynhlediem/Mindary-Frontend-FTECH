@@ -9,6 +9,10 @@ export interface Diaries {
     [date: string]: string | null;
 }
 
+export interface IsAnalysisDto {
+    analyzed: boolean;
+}
+
 export interface ErrorResponse {
     status: BigInteger,
     message: string
