@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
+import Header from '@/components/general/Header';
 import DataBlock from '@/components/insight/DataBlock';
 import MoodChart from '@/components/insight/MoodChart';
 import useAuthStore from '@/hooks/useAuthStore';
