@@ -19,6 +19,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Plugin,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
@@ -28,32 +29,73 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
+
+const emojiIcons = [
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+];
+
+emojiIcons[0].src = '/bad-mood.svg';
+emojiIcons[1].src = '/not-good-mood.svg';
+emojiIcons[2].src = '/okay-mood.svg';
+emojiIcons[3].src = '/good-mood.svg';
+emojiIcons[4].src = '/great-mood.svg';
+
+// Plugin to draw emoji icons on y-axis
+const customYAxisIconPlugin: Plugin = {
+  id: 'customYAxisIconPlugin',
+  afterDraw(chart) {
+    const yAxis = chart.scales['y'];
+    console.log(yAxis);
+    const ctx = chart.ctx;
+    console.log(ctx);
+
+    yAxis.ticks.forEach((tick, index) => {
+      const y = yAxis.getPixelForTick(index);
+      const icon = emojiIcons[tick.value - 1 as number];
+
+      if (icon && icon.complete) {
+        ctx.drawImage(icon, yAxis.left + 3, y - 10, 20, 20); // Adjust position and size
+      }
+    });
+  }
+};
 
 export const options = {
   responsive: true,
+  scales: {
+    y: {
+      min: 1,
+      max: 5,
+      ticks: {
+        display: true,
+        callback: (val: number) => "  " + val,
+      },
+      grid: {
+        display: true,
+        drawBorder: false,
+      }
+    },
+    x: {
+      grid: {
+        display: false,
+        drawBorder: false,
+      }
+    }
+  },
   plugins: {
     legend: {
-      display: false,
-    },
-    title: {
-      display: false,
-      text: 'Chart.js Bar Chart',
-    },
-  },
+      display: false
+    }
+  }
 };
 
-// export const data = {
-//   // labels,
-//   datasets: [
-//     {
-//       label: 'Dataset 1',
-//       data: [1, 2, 5, 4, 5, 3, 2],
-//       backgroundColor: '#7EC8D3',
-//     },
-//   ],
-// };
+export const plugins = [customYAxisIconPlugin];
 
 const MoodChart = () => {
   const { accessToken, userId } = useAuthStore();
@@ -148,8 +190,6 @@ const MoodChart = () => {
     fetchEmotionLevel();
   }, [fetchEmotionLevel])
 
-  console.log(emotionLevel);
-
   return (
     <div className="mx-4 px-4 py-4 bg-white rounded-lg flex flex-col justify-start items-center gap-4">
       <div className="text-black text-xl font-bold font-sans leading-7 self-start">Mood Chart</div>
@@ -170,12 +210,28 @@ const MoodChart = () => {
 
       {/* Chart Main Part */}
       <div>
-        <Bar options={options} data={{
+        <Bar options={options} plugins={plugins} data={{
           labels: dateLabel, datasets: [
             {
-              label: 'Dataset 1',
+              label: 'Emotion Level',
               data: emotionLevel,
-              backgroundColor: '#7EC8D3',
+              backgroundColor: (context: any) => {
+                const value = context.dataset.data[context.dataIndex];
+                // console.log(context.dataIndex, value);
+                switch (value) {
+                  case 1:
+                    return "#F54336";
+                  case 2:
+                    return "#FF981F";
+                  case 3:
+                    return "#FFC02D";
+                  case 4:
+                    return "#7EC8D3";
+                  case 5:
+                    return "#00A5E3";
+                }
+              },
+              borderRadius: Number.MAX_VALUE
             },]
         }} />
       </div>

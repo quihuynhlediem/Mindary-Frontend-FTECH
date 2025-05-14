@@ -41,6 +41,9 @@ importers:
       chart.js:
         specifier: ^4.4.9
         version: 4.4.9
+      chartjs-plugin-autocolors:
+        specifier: ^0.3.1
+        version: 0.3.1(@kurkle/color@0.3.4)(chart.js@4.4.9)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1101,6 +1104,12 @@ packages:
   chart.js@4.4.9:
     resolution: {integrity: sha512-EyZ9wWKgpAU0fLJ43YAEIF8sr5F2W3LqbS40ZJyHIner2lY14ufqv2VMp69MAiZ2rpwxEUxEhIH/0U3xyRynxg==}
     engines: {pnpm: '>=8'}
+
+  chartjs-plugin-autocolors@0.3.1:
+    resolution: {integrity: sha512-8FHemt0Ef5BM7kQimh4eAkCRFPBav4seUFi7nEaShX+DjZMU9V4LqEDgXNglKbnYTTn3QmoG4v9gyiQDUAk9WQ==}
+    peerDependencies:
+      '@kurkle/color': ^0.3.1
+      chart.js: '>=2'
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -3360,6 +3369,11 @@ snapshots:
   chart.js@4.4.9:
     dependencies:
       '@kurkle/color': 0.3.4
+
+  chartjs-plugin-autocolors@0.3.1(@kurkle/color@0.3.4)(chart.js@4.4.9):
+    dependencies:
+      '@kurkle/color': 0.3.4
+      chart.js: 4.4.9
 
   chokidar@3.6.0:
     dependencies:
