@@ -125,7 +125,7 @@ export default function Page() {
                                                     {formatTime(currentTime)}
                                                 </span>
                                                 <span className="text-white text-sm">
-                                                    {formatTime(duration)}
+                                                    {formatTime(active.media_length)}
                                                 </span>
                                             </div>
                                         </motion.div>

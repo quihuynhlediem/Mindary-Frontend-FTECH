@@ -6,7 +6,7 @@ import { set } from "date-fns";
 
 export function useMeditationData() {
   const [meditations, setMeditations] = useState<MeditationProp[]>([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(2);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { ref, inView } = useInView({
