@@ -12,7 +12,7 @@ declare module 'axios' {
 }
 
 const axiosInstance = axios.create({
-    baseURL: ""
+    baseURL: "http://localhost:8080/api/v1"
 })
 
 

@@ -2,7 +2,7 @@
 
 import { MeditationProp } from "@/app/types/meditation";
 import React, { useEffect } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { CustomSlider, formatTime } from "@/components/ui/audio-player";
 import { Button } from "@/components/ui/button";
