@@ -38,7 +38,7 @@ const refreshAccessToken = async (refreshToken: string) => {
             return null;
         }
 
-        setAuth(res.data.userId, res.data.accessToken, res.data.refreshToken);
+        setAuth(res.data.userId, res.data.accessToken, res.data.refreshToken, res.data.salt);
 
         return res.data.refreshToken
     } catch (error) {

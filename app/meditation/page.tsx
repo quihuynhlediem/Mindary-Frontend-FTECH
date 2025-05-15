@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useEffect } from "react";
 import MeditationCard from "@/components/MeditationCard";
 import useAuthStore from "@/hooks/useAuthStore";
@@ -18,9 +17,9 @@ export default function Meditation() {
     }, [isAuthenticated, router])
 
     // Prevent rendering while redirecting
-    // if (!isAuthenticated) {
-    //     return null
-    // }
+    if (!isAuthenticated) {
+        return null
+    }
 
     return (
         <div className="bg-primary py-6 px-10 flex flex-col gap-8">

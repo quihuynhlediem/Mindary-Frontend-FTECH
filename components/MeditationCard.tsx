@@ -1,7 +1,7 @@
 "use client";
 
 import { MeditationProp } from "@/app/types/meditation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { CustomSlider, formatTime } from "@/components/ui/audio-player";
@@ -20,11 +20,13 @@ import { cn } from "@/lib/utils";
 import { useMeditationData } from "@/hooks/useMeditationData";
 import { useMeditationPlayer } from "@/hooks/useMeditationPlayer";
 import { useActiveMeditation } from "@/hooks/useActiveMeditation";
+import test from "node:test";
 
 export default function MeditationCard() {
   const { meditations, loading, hasMore, setMeditations, observerRef } = useMeditationData();
   const { active, setActive, modalRef, getActiveMeditation } = useActiveMeditation();
   const activeMeditation = getActiveMeditation();
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const {
     videoRef,
     isPlaying,
@@ -90,7 +92,7 @@ export default function MeditationCard() {
               >
                 {/* Cover */}
                 {active.picture_url && (
-                  <motion.div className="bg-white/20 overflow-hidden rounded-[16px] h-[180px] w-full relative">
+                  <motion.div className="bg-white/20 overflow-hidden rounded-[12px] h-[180px] w-full relative">
                     <img
                       src={active.picture_url}
                       alt="cover"
@@ -221,6 +223,14 @@ export default function MeditationCard() {
                         </Button>
                       </motion.div>
                     </div>
+                  </motion.div>
+                  <motion.div>
+                    <button onClick={() => setIsExpanded((state) => !state)} className={`text-white ${!isExpanded ? 'block' : 'hidden'}`}>Track detail</button>
+                    {isExpanded && (
+                      <div>
+                        <h1 className="text-white">{active.description}</h1>
+                      </div>
+                    )}
                   </motion.div>
                 </motion.div>
               </motion.div>
