@@ -1,7 +1,7 @@
 "use client";
 import { useAtomValue } from "jotai";
 import React from "react";
-import { diaryAtom } from "./DailyUserContent";
+import { diaryAtom } from "./DailyUserDiary";
 import { Recommendation } from "@/app/types/diary";
 
 const tipsData = [
