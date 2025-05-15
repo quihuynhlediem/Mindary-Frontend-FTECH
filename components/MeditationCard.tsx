@@ -22,8 +22,8 @@ import { useMeditationPlayer } from "@/hooks/useMeditationPlayer";
 import { useActiveMeditation } from "@/hooks/useActiveMeditation";
 import test from "node:test";
 
-export default function MeditationCard() {
-  const { meditations, loading, hasMore, setMeditations, observerRef } = useMeditationData();
+export default function MeditationCard(accessToken: {accessToken: string | null}) {
+  const { meditations, loading, hasMore, setMeditations, observerRef } = useMeditationData(accessToken);
   const { active, setActive, modalRef, getActiveMeditation } = useActiveMeditation();
   const activeMeditation = getActiveMeditation();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);

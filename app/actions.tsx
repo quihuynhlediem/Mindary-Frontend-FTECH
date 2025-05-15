@@ -1,12 +1,21 @@
 "use client";
 
 import axiosInstance from "@/apiConfig";
+import useAuthStore from "@/hooks/useAuthStore";
 import axios from "axios";
+import { useAtomValue } from "jotai/react/useAtomValue";
 
-export async function fetchMeditations(page: number) {
+export async function fetchMeditations(page: number, accessToken: {accessToken: string | null}) {
     try {
-        const response = await axiosInstance.get(`/meditation/load-data?page=${page}&limit=10`);
-        console.log("load succes");
+        // console.log("page", typeof page)
+        const pageNumber = page.toString();
+        console.log("accessToken", accessToken.accessToken);
+        const response = await axiosInstance.get(`/meditations/load-data?page=${pageNumber}&limit=10`, {
+            headers: {
+                "Authorization": `Bearer ${accessToken.accessToken}`
+            },
+        });
+        console.log("load success");
         return response.data;
     } catch (error) {
         console.error("Error fetching meditation data:", error);

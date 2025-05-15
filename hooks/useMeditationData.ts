@@ -4,9 +4,9 @@ import { fetchMeditations } from "@/app/actions";
 import { useInView } from "react-intersection-observer";
 import { set } from "date-fns";
 
-export function useMeditationData() {
+export function useMeditationData(accessToken: {accessToken: string | null}) {
   const [meditations, setMeditations] = useState<MeditationProp[]>([]);
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { ref, inView } = useInView({
@@ -19,8 +19,8 @@ export function useMeditationData() {
 
     setLoading(true);
     try {
-      const newData = await fetchMeditations(page);
-
+      const newData = await fetchMeditations(page, accessToken);
+      console.log(newData.length);
       if (newData && newData.length > 0) {
         setMeditations(prev => [...prev, ...newData]);
         setPage(prev => prev + 1);
