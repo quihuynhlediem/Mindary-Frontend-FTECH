@@ -142,64 +142,9 @@ const page = () => {
                         </p>
                     </CardFooter>
                 </Card>
-                <div className="flex w-full max-w-md flex-col gap-6">
-                    <Card>
-                        <CardHeader className="text-center">
-                            <CardTitle className="text-xl">Welcome Back</CardTitle>
-                            <CardDescription>Let's dive into your account!</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="email"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="name@example.com" type="email" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="password"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <div className="flex items-center justify-between">
-                                                    <FormLabel>Password</FormLabel>
-                                                    <Link href="/reset-password" className="text-sm text-primary hover:underline">
-                                                        Forgot password?
-                                                    </Link>
-                                                </div>
-                                                <FormControl>
-                                                    <Input type="password" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <Button type="submit" className="w-full" disabled={isLoading}>
-                                        {isLoading ? "Logging in..." : "Login"}
-                                    </Button>
-                                </form>
-                            </Form>
-                        </CardContent>
-                        <CardFooter className="flex justify-center">
-                            <p className="text-sm text-muted-foreground">
-                                Don't have an account?{" "}
-                                <Link href="/signup" className="text-primary hover:underline">
-                                    Sign up
-                                </Link>
-                            </p>
-                        </CardFooter>
-                    </Card>
-                </div>
             </div>
-            )
+        </div>
+    )
 }
 
-            export default page
+export default page
