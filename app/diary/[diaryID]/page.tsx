@@ -26,7 +26,6 @@ const Diary = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [diaryExists, setDiaryExists] = useState<boolean>(false);
     const [isAnalyzed, setIsAnalyzed] = useState<boolean>(false);
-
     // Redirect to login page
     useEffect(() => {
         if (!isAuthenticated) {

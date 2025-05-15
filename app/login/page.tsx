@@ -52,8 +52,9 @@ const page = () => {
             })
 
             // Store authentication tokens
-            const { userId, accessToken, refreshToken, salt } = response.data
-            setAuthTokens(userId, accessToken, refreshToken, salt)
+            const { userId, accessToken, refreshToken, salt, username } = response.data
+            console.info(username)
+            setAuthTokens(userId, accessToken, refreshToken, salt, username)
 
             toast({
                 variant: "default",
@@ -62,7 +63,7 @@ const page = () => {
             })
 
             // Redirect to dashboard
-            window.location.href = "/"
+            // window.location.href = "/"
         } catch (error: any) {
             console.error('Login error:', error)
 
