@@ -246,7 +246,7 @@ export default function MeditationCard() {
                   height={100}
                   src={med.picture_url}
                   alt={med.title}
-                  className="h-60 w-full rounded-2xl object-cover object-top"
+                  className="h-60 w-full rounded-[16px] object-cover object-top"
                 />
                 <div
                   className="bg-black/50 w-fit absolute bottom-1 left-1 text-white text-xs font-semibold px-2 py-1 rounded-full"

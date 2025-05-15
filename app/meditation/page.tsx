@@ -4,20 +4,20 @@
 import React, { useEffect } from "react";
 import MeditationCard from "@/components/MeditationCard";
 import useAuthStore from "@/hooks/useAuthStore";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Meditation() {
-    // const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
-    // const router = useRouter();
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
+    const router = useRouter();
 
-    // // Redirect to login page
-    // useEffect(() => {
-    //     if (!isAuthenticated) {
-    //         router.push('/login')
-    //     }
-    // }, [isAuthenticated, router])
+    // Redirect to login page
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.push('/login')
+        }
+    }, [isAuthenticated, router])
 
-    // // Prevent rendering while redirecting
+    // Prevent rendering while redirecting
     // if (!isAuthenticated) {
     //     return null
     // }
