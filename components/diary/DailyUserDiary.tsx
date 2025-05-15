@@ -76,7 +76,7 @@ const PasswordModal: React.FC<{
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-primary text-white p-2 rounded hover:bg-primary-hover"
+                            className="bg-primary-hover text-white p-2 rounded hover:bg-primary-hover"
                         >
                             Submit
                         </Button>
@@ -310,16 +310,14 @@ const DailyUserContent = () => {
                 onSubmit={handlePasswordSubmit}
                 onClose={() => setIsPasswordModalOpen(false)}
             />
-            {diaries[chosenDate!] ? (
+            {diaries[chosenDate!] && (
                 <div className="p-4 rounded-lg bg-white flex flex-col space-y-6">
                     <div className="break-words">{diaries[chosenDate!]}</div>
                     {diaryImages[chosenDate!] ? (
                         <ImageViewer diaryImages={diaryImages[chosenDate!]} />
-                        // <div></div>
                     ) : (
                         <div></div>
                     )}
-
                     {/* Uncomment when ready to include these components */}
                     {/* <AnimatedEmoji />
                     <StatusMessage />   
@@ -327,8 +325,6 @@ const DailyUserContent = () => {
                     <ReasonSection />
                     <Tips /> */}
                 </div>
-            ) : (
-                <EmptyDiary />
             )}
         </div>
     );
