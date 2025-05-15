@@ -4,7 +4,6 @@ import { format, subDays, addDays, isAfter } from "date-fns";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/hooks/useUserStore";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
 
 const Calendar = () => {
     const today = new Date();
@@ -14,8 +13,8 @@ const Calendar = () => {
     const [endDate, setEndDate] = useState<Date>(today);
 
     // Generate 5 days ending with endDate
-    const days = Array.from({ length: 5 }).map((_, i) =>
-        subDays(endDate, 4 - i)
+    const days = Array.from({ length: 7 }).map((_, i) =>
+        subDays(endDate, 6 - i)
     );
 
     // Handle user choose to view a date
@@ -26,12 +25,12 @@ const Calendar = () => {
 
     // Slide to previous 5 days
     const handlePrevious = () => {
-        setEndDate((prev) => subDays(prev, 5));
+        setEndDate((prev) => subDays(prev, 7));
     };
 
     // Slide to next 5 days, but not beyond today
     const handleNext = () => {
-        const newEndDate = addDays(endDate, 5);
+        const newEndDate = addDays(endDate, 7);
         // Prevent moving past today
         if (!isAfter(newEndDate, today)) {
             setEndDate(newEndDate);
@@ -45,7 +44,7 @@ const Calendar = () => {
 
     return (
         <div className="flex flex-col items-center my-4 w-full">
-            <div className="grid grid-cols-7 w-full gap-1 items-center">
+            <div className="grid grid-cols-9 w-full gap-1 items-center">
                 {/* Left Arrow */}
                 <button
                     onClick={handlePrevious}
@@ -67,7 +66,7 @@ const Calendar = () => {
                                 }
                             }}
                             className={`px-2 py-2 text-center rounded-lg ${isFuture
-                                ? "bg-gray-100 text-black cursor-not-allowed"
+                                ? "bg-primary text-black cursor-not-allowed"
                                 : "cursor-pointer"
                                 } ${dayKey === selectedDate && !isFuture
                                     ? "bg-primary-hover font-bold text-white"

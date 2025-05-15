@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import Loader from '@/components/general/Loader';
 import MoonLoader from 'react-spinners/MoonLoader';
 
-const page = () => {
+const Diary = () => {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
     const accessToken = useAuthStore((state) => state.accessToken);
     const userId = useAuthStore((state) => state.userId);
@@ -143,4 +143,4 @@ const page = () => {
     );
 }
 
-export default page;
+export default Diary;
