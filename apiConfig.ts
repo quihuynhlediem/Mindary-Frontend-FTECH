@@ -56,7 +56,6 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config
 
         if (error.response?.status === 401 && originalRequest && !originalRequest?._retry) {
-            console.log("gi")
             const refreshToken: string = Cookies.get("refreshToken") as string;
             // const refreshToken: string = useAtomValue(refreshTokenAtom) as string;
             originalRequest._retry = true

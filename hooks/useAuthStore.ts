@@ -8,7 +8,8 @@ interface AuthStore {
     refreshToken: string | null;
     salt: string | null;
     decryptKey: string | null;
-    setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string) => void;
+    username: string | null;
+    setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string, username: string) => void;
     setDecryptKey: (decryptKey: string) => void;
     clearAuthTokens: () => void;
     isAuthenticated: () => boolean;
@@ -20,6 +21,7 @@ const useAuthStore = create<AuthStore>((set, get) => {
     let refreshToken: string | null = null;
     let salt: string | null = null;
     let decryptKey: string | null = null;
+    let username: string | null = null
 
     if (typeof window !== 'undefined') {
         // Only access localStorage in the browser environment
@@ -28,6 +30,7 @@ const useAuthStore = create<AuthStore>((set, get) => {
         refreshToken = Cookies.get('refreshToken') || null;
         salt = Cookies.get('salt') || null;
         decryptKey = Cookies.get('decryptKey') || null;
+        username = Cookies.get('username') || null;
     }
 
     return {
@@ -36,14 +39,17 @@ const useAuthStore = create<AuthStore>((set, get) => {
         refreshToken: refreshToken || null,
         salt: salt || null,
         decryptKey: decryptKey || null,
-        setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string) => {
+        username: username || null,
+        setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string, username: string) => {
+            console.debug(username)
             if (typeof window !== 'undefined') {
                 Cookies.set('userId', userId, { expires: 1, secure: true, sameSite: "Strict" });
                 Cookies.set('accessToken', accessToken, { expires: 1, secure: true, sameSite: "Strict" });
                 Cookies.set('refreshToken', refreshToken, { expires: 1, secure: true, sameSite: "Strict" });
-                Cookies.set('salt', salt, { expires: 1, secure: true, sameSite: "Strict" })
+                Cookies.set('salt', salt, { expires: 1, secure: true, sameSite: "Strict" });
+                Cookies.set('username', username, { expires: 1, secure: false, sameSite: "Strict" })
             }
-            set({ userId, accessToken, refreshToken, salt });
+            set({ userId, accessToken, refreshToken, salt, username });
         },
         setDecryptKey: (decryptKey: string) => {
             Cookies.set('decryptKey', decryptKey, { expires: 1, secure: true, sameSite: "Strict" })
@@ -51,12 +57,13 @@ const useAuthStore = create<AuthStore>((set, get) => {
         },
         clearAuthTokens: () => {
             if (typeof window !== 'undefined') {
-                localStorage.removeItem('userId');
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                localStorage.removeItem('salt')
+                Cookies.remove('userId');
+                Cookies.remove('accessToken');
+                Cookies.remove('refreshToken');
+                Cookies.remove('salt');
+                Cookies.remove('username')
             }
-            set({ userId: null, accessToken: null, refreshToken: null, salt: null });
+            set({ userId: null, accessToken: null, refreshToken: null, salt: null, username: null });
         },
         isAuthenticated: () => {
             return !!get().accessToken;

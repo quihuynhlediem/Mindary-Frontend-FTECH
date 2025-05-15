@@ -132,9 +132,9 @@ const page = () => {
             console.log(privateKey)
 
             await axiosInstance.post("/auth/signup", {
+                username: values.username,
                 firstName: values.firstName,
                 lastName: values.lastName,
-                username: values.username,
                 email: values.email,
                 password: values.password,
                 salt: saltBase64,
