@@ -1,44 +1,94 @@
 "use client";
 import React, { useState } from "react";
-import { format, startOfWeek, addDays } from "date-fns";
-import { atom, useAtom, useAtomValue } from "jotai";
+import { format, subDays, addDays, isAfter } from "date-fns";
+import { useRouter } from "next/navigation";
 import useUserStore from "@/hooks/useUserStore";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Calendar = () => {
     const today = new Date();
-    const startWeek = startOfWeek(today, { weekStartsOn: 1 });
+    const router = useRouter();
     const selectedDate = useUserStore((state) => state.selectedDate);
-    const setSelectedDate = useUserStore((state) => state.setSelectedDate)
+    const setSelectedDate = useUserStore((state) => state.setSelectedDate);
+    const [endDate, setEndDate] = useState<Date>(today);
 
-    const days = Array.from({ length: 7 }).map((_, i) => addDays(startWeek, i));
+    // Generate 5 days ending with endDate
+    const days = Array.from({ length: 7 }).map((_, i) =>
+        subDays(endDate, 6 - i)
+    );
 
+    // Handle user choose to view a date
     const handleDayClick = (date: string) => {
         setSelectedDate(date);
+        router.push(`/diary/${date}`)
     };
 
+    // Slide to previous 5 days
+    const handlePrevious = () => {
+        setEndDate((prev) => subDays(prev, 7));
+    };
+
+    // Slide to next 5 days, but not beyond today
+    const handleNext = () => {
+        const newEndDate = addDays(endDate, 7);
+        // Prevent moving past today
+        if (!isAfter(newEndDate, today)) {
+            setEndDate(newEndDate);
+        } else {
+            setEndDate(today); // Snap back to today if overshooting
+        }
+    };
+
+    // Disable next button if endDate is today
+    const isNextDisabled = !isAfter(today, endDate);
 
     return (
-        <div className="flex flex-col items-center my-4 w-full pb-3">
-            <div className="grid grid-cols-7 w-full gap-1">
+        <div className="flex flex-col items-center my-4 w-full">
+            <div className="grid grid-cols-9 w-full gap-1 items-center">
+                {/* Left Arrow */}
+                <button
+                    onClick={handlePrevious}
+                    className="p-2 rounded-full bg-transparent hover:bg-gray-200 flex justify-center items-center"
+                >
+                    <ChevronLeft className="text-primary w-6 h-6" />
+                </button>
+
+                {/* Dates */}
                 {days.map((day, index) => {
                     const dayKey = format(day, "yyyy-MM-dd");
+                    const isFuture = isAfter(day, today);
                     return (
                         <div
                             key={index}
                             onClick={() => {
-                                handleDayClick(dayKey);
-
+                                if (!isFuture) {
+                                    handleDayClick(dayKey);
+                                }
                             }}
-                            className={`px-2 py-2 text-center rounded-lg cursor-pointer
-                                ${dayKey === selectedDate ? "bg-primary font-bold text-white" : "bg-gray-200 text-gray-800"}
-                                ${dayKey !== selectedDate && "hover:bg-gray-300"}`}
+                            className={`px-2 py-2 text-center rounded-lg ${isFuture
+                                ? "bg-primary text-black cursor-not-allowed"
+                                : "cursor-pointer"
+                                } ${dayKey === selectedDate && !isFuture
+                                    ? "bg-primary font-bold text-white"
+                                    : " text-black font-bold"
+                                } ${dayKey !== selectedDate && !isFuture && "hover:bg-gray-300"}`}
                         >
-                            {format(day, "EEE")}
-                            <br />
                             {format(day, "dd")}
+                            <br />
+                            {format(day, "EEE")}
                         </div>
                     );
                 })}
+
+                {/* Right Arrow */}
+                <button
+                    onClick={handleNext}
+                    className={`p-2 bg-transparent rounded-full flex justify-center items-center ${isNextDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"
+                        }`}
+                    disabled={isNextDisabled}
+                >
+                    <ChevronRight className="text-primary w-6 h-6" />
+                </button>
             </div>
         </div>
     );

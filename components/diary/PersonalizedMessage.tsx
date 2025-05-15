@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { diaryAtom } from "./DailyUserContent";
+import { diaryAtom } from "./DailyUserDiary";
 import Excerpt from "@/components/Excerpt";
 
 const PersonalizedMessage = () => {

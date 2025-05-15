@@ -2,6 +2,7 @@ import axios, { Axios, AxiosError } from "axios";
 import { AuthResponse } from "./app/types/diary";
 import { headers } from "next/headers";
 import useAuthStore from "./hooks/useAuthStore";
+import Cookies from "js-cookie";
 
 // Module augmentation for InternalAxiosRequestConfig
 declare module 'axios' {
@@ -16,7 +17,8 @@ const axiosInstance = axios.create({
 
 
 const refreshAccessToken = async (refreshToken: string) => {
-    const setAuth = useAuthStore((state) => state.setAuthTokens)
+    const setAuth = useAuthStore((state: any) => state.setAuthTokens);
+    const clearAuthTokens = useAuthStore((state) => state.clearAuthTokens);
 
     if (!refreshToken) {
         window.location.href = "/login"
@@ -33,7 +35,7 @@ const refreshAccessToken = async (refreshToken: string) => {
             })
 
         if (res.status != 200) {
-            localStorage.clear();
+            clearAuthTokens();
             window.location.href = "/login"
             return null;
         }
@@ -42,7 +44,7 @@ const refreshAccessToken = async (refreshToken: string) => {
 
         return res.data.refreshToken
     } catch (error) {
-        localStorage.clear();
+        clearAuthTokens();
         window.location.href = "/login"
         return null;
     }
@@ -55,7 +57,7 @@ axiosInstance.interceptors.response.use(
 
         if (error.response?.status === 401 && originalRequest && !originalRequest?._retry) {
             console.log("gi")
-            const refreshToken: string = localStorage.getItem("refreshToken") as string;
+            const refreshToken: string = Cookies.get("refreshToken") as string;
             // const refreshToken: string = useAtomValue(refreshTokenAtom) as string;
             originalRequest._retry = true
 

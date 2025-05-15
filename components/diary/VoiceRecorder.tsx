@@ -58,7 +58,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onAudioChange }) => {
     };
 
     return (
-        <div className="mt-4">
+        <div className="">
             <Label className=" text-[18px] font-semibold">Voice Memo</Label>
 
             {audioUrl ? (
@@ -86,7 +86,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onAudioChange }) => {
                         </>
                     ) : (
                         <>
-                            <Mic size={20} className="text-primary" />
+                            <Mic size={20} />
                             <span>Tap to Record</span>
                         </>
                     )}

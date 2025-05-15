@@ -30,8 +30,8 @@ const signupSchema = z.object({
     username: z.string()
         .min(3, { message: "Username must be at least 3 characters" })
         .max(30, { message: "Username must be at most 30 characters" })
-        .regex(/^[a-zA-Z0-9_-]+$/, { 
-            message: "Username can only contain letters, numbers, underscores and hyphens" 
+        .regex(/^[a-zA-Z0-9_-]+$/, {
+            message: "Username can only contain letters, numbers, underscores and hyphens"
         }),
     email: z.string().email({
         message: "Please enter a valid email address",
@@ -53,6 +53,7 @@ const page = () => {
     const [errorMessage, setErrorMessage] = useState<string | any>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const { toast } = useToast()
+    const UNIT_8_ARRAY: number = parseInt(process.env.UNIT_8_ARRAY || "32")
 
     const form = useForm<z.infer<typeof signupSchema>>({
         resolver: zodResolver(signupSchema),
@@ -66,26 +67,80 @@ const page = () => {
         }
     })
 
-    useEffect(() => {
-        if (errorMessage != null) {
-            console.log(errorMessage)
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: errorMessage
-            })
-        }
-    }, [errorMessage, toast])
+    //     useEffect(() => {
+    //         if (errorMessage != null) {
+    //             console.log(errorMessage)
+    //             toast({
+    //                 variant: "destructive",
+    //                 title: "Error",
+    //                 description: errorMessage
+    //             })
+    //         }
+    //     }, [errorMessage])
 
     const handleSignup = async (values: z.infer<typeof signupSchema>) => {
         setIsLoading(true)
         try {
+            // Generate salt for login password
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const saltBase64 = btoa(String.fromCharCode(...salt));
+
+            // Generate RSA key pair
+            const keyPair = await crypto.subtle.generateKey(
+                {
+                    name: "RSA-OAEP",
+                    modulusLength: 2048,
+                    publicExponent: new Uint8Array([0x01, 0x00, 0x01]), // 65537
+                    hash: "SHA-256"
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+
+            // Export keys
+            const publicKey = await crypto.subtle.exportKey("spki", keyPair.publicKey);
+            const privateKey = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
+            const publicKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKey)));
+            const privateKeyBytes = new Uint8Array(privateKey);
+
+            // Encrypt private key with password (AES-GCM)
+            const iv = crypto.getRandomValues(new Uint8Array(12)); // 12 bytes for GCM
+            const privateKeyIvBase64 = btoa(String.fromCharCode(...iv));
+
+            // Pad or truncate password to 32 bytes (AES-256)
+            const passwordBytes = new TextEncoder().encode(values.password);
+            console.log(passwordBytes)
+            const keyBytes = new Uint8Array(UNIT_8_ARRAY);
+            for (let i = 0; i < 32; i++) {
+                keyBytes[i] = i < passwordBytes.length ? passwordBytes[i] : 0;
+            }
+
+            const aesKey = await crypto.subtle.importKey(
+                "raw",
+                keyBytes,
+                { name: "AES-GCM" },
+                false,
+                ["encrypt"]
+            );
+
+            const encryptedPrivateKey = await crypto.subtle.encrypt(
+                { name: "AES-GCM", iv },
+                aesKey,
+                privateKeyBytes
+            );
+            const encryptedPrivateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(encryptedPrivateKey)));
+            console.log(privateKey)
+
             await axiosInstance.post("/auth/signup", {
                 firstName: values.firstName,
                 lastName: values.lastName,
                 username: values.username,
                 email: values.email,
                 password: values.password,
+                salt: saltBase64,
+                publicKey: publicKeyBase64,
+                encryptedPrivateKey: encryptedPrivateKeyBase64,
+                privateKeyIv: privateKeyIvBase64
             })
 
             toast({
@@ -94,7 +149,7 @@ const page = () => {
                 description: "Please check your email to verify your account.",
             })
 
-            window.location.href = "/login"
+            // window.location.href = "/login"
         } catch (error: any) {
             console.error('Registration error:', error);
 
@@ -126,7 +181,7 @@ const page = () => {
                             <form onSubmit={form.handleSubmit(handleSignup)}>
                                 <div className="grid gap-6">
                                     <div className="flex flex-col gap-4">
-                                        
+
                                         <Button variant="outline" className="w-full">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5 mr-2">
                                                 <path
@@ -229,7 +284,7 @@ const page = () => {
                                                     <FormControl>
                                                         <Input type="password" placeholder="********" {...field} />
                                                     </FormControl>
-                                                    
+
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -267,4 +322,4 @@ const page = () => {
     )
 }
 
-export default page
+export default page;
