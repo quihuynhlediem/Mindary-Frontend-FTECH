@@ -20,13 +20,13 @@ import { cn } from "@/lib/utils";
 import { useMeditationData } from "@/hooks/useMeditationData";
 import { useMeditationPlayer } from "@/hooks/useMeditationPlayer";
 import { useActiveMeditation } from "@/hooks/useActiveMeditation";
-import test from "node:test";
+import DetailCard from "@/components/meditation/DetailCard";
 
-export default function MeditationCard(accessToken: { accessToken: string | null }) {
+export default function MeditationLibrary(accessToken: { accessToken: string | null }) {
   const { meditations, loading, hasMore, setMeditations, observerRef } = useMeditationData(accessToken);
   const { active, setActive, modalRef, getActiveMeditation } = useActiveMeditation();
   const activeMeditation = getActiveMeditation();
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);
   const {
     videoRef,
     isPlaying,
@@ -48,6 +48,13 @@ export default function MeditationCard(accessToken: { accessToken: string | null
     () => setActive(null),
     resetDuration
   );
+  const toggleDescription = (id: string) => {
+    setExpandedDescriptions(prev =>
+      prev.includes(id)
+        ? prev.filter(itemId => itemId !== id)
+        : [...prev, id]
+    );
+  };
 
   return (
     <div>
@@ -224,14 +231,14 @@ export default function MeditationCard(accessToken: { accessToken: string | null
                       </motion.div>
                     </div>
                   </motion.div>
-                  <motion.div>
+                  {/* <motion.div>
                     <button onClick={() => setIsExpanded((state) => !state)} className={`text-white ${!isExpanded ? 'block' : 'hidden'}`}>Track detail</button>
                     {isExpanded && (
                       <div>
                         <h1 className="text-white">{active.description}</h1>
                       </div>
                     )}
-                  </motion.div>
+                  </motion.div> */}
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -244,7 +251,7 @@ export default function MeditationCard(accessToken: { accessToken: string | null
           <motion.div
             key={med._id}
             onClick={() => setActive(med)}
-            className="p-4 flex flex-col hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-[16px] cursor-pointer"
+            className="mb-4 flex flex-col hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-[16px] cursor-pointer"
           >
             <div className="flex gap-2 flex-col w-full">
               <motion.div
@@ -271,16 +278,46 @@ export default function MeditationCard(accessToken: { accessToken: string | null
               <div className="flex justify-center flex-col">
                 <motion.h3
                   layoutId={`title-${med._id}`}
-                  className="font-semibold text-neutral-800 dark:text-neutral-200 text-left text-base"
+                  className="text-lg font-bold text-neutral-800 dark:text-neutral-200 text-left"
                 >
                   {med.title}
                 </motion.h3>
                 <motion.p
                   layoutId={`author-${med._id}`}
-                  className="text-sm font-normal text-neutral-600 dark:text-neutral-400 text-left"
+                  className="text-xs font-normal text-neutral-600 dark:text-neutral-400 text-left"
                 >
-                  {med.author}
+                  by {med.author}
                 </motion.p>
+
+                {/* Truncated description with See More/See Less toggle */}
+                <motion.div>
+                  {med.description && (
+                    <>
+                      <motion.p className="text-sm text-neutral-700 dark:text-neutral-300 mt-1">
+                        {med.description.length > 50 ? (
+                          <>
+                            {expandedDescriptions.includes(med._id)
+                              ? med.description
+                              : `${med.description.substring(0, 50)}...`}
+                          </>
+                        ) : (
+                          med.description
+                        )}
+                      </motion.p>
+                      {med.description.length > 50 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDescription(med._id);
+                          }}
+                          className="text-xs font-medium text-blue-600 dark:text-blue-400 mt-1 hover:underline"
+                        >
+                          {expandedDescriptions.includes(med._id) ? "See Less" : "See More"}
+                        </button>
+                      )}
+                    </>
+                  )}
+                </motion.div>
               </div>
             </div>
           </motion.div>

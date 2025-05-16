@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import MeditationCard from "@/components/MeditationCard";
+import MeditationLibrary from "@/components/meditation/MeditationLibrary";
 import useAuthStore from "@/hooks/useAuthStore";
 import { useRouter } from "next/navigation";
 
@@ -23,9 +23,9 @@ export default function Meditation() {
     }
 
     return (
-        <div className="bg-primary py-6 px-10 flex flex-col gap-8">
-            <h2 className="text-white text-3xl font-bold">Meditation library</h2>
-            <MeditationCard accessToken = {accessToken}/>
+        <div className="bg-white py-6 px-10 flex flex-col gap-8">
+            <h2 className=" text-3xl font-bold">Meditation library</h2>
+            <MeditationLibrary accessToken = {accessToken}/>
         </div>
     );
 }
