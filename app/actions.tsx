@@ -1,9 +1,6 @@
 "use client";
 
 import axiosInstance from "@/apiConfig";
-import useAuthStore from "@/hooks/useAuthStore";
-import axios from "axios";
-import { headers } from "next/headers";
 
 export async function fetchMeditations(page: number, accessToken: { accessToken: string | null }) {
     try {
@@ -15,7 +12,7 @@ export async function fetchMeditations(page: number, accessToken: { accessToken:
                 "Authorization": `Bearer ${accessToken.accessToken}`
             },
         });
-        console.log("load success");
+        console.log("load success", response.data);
         return response.data;
     } catch (error) {
         console.error("Error fetching meditation data:", error);

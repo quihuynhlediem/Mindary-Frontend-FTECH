@@ -4,7 +4,7 @@ import { fetchMeditations } from "@/app/actions";
 import { useInView } from "react-intersection-observer";
 import { set } from "date-fns";
 
-export function useMeditationData(accessToken: {accessToken: string | null}) {
+export function useMeditationData(accessToken: { accessToken: string | null }) {
   const [meditations, setMeditations] = useState<MeditationProp[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -34,10 +34,10 @@ export function useMeditationData(accessToken: {accessToken: string | null}) {
     }
   };
 
-  // Initial load
-  useEffect(() => {
-    loadMoreMeditations();
-  }, []);
+  // // Initial load
+  // useEffect(() => {
+  //   loadMoreMeditations();
+  // });
 
   // Load more when scrolled to bottom
   useEffect(() => {
