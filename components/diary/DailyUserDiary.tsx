@@ -1,10 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import AnimatedEmoji from "./AnimatedEmoji";
-import PersonalizedMessage from "./PersonalizedMessage";
-import StatusMessage from "./StatusMessage";
-import ReasonSection from "./ReasonSection";
-import Tips from "./Tips";
 import axios, { AxiosError } from "axios";
 import { Button } from "../ui/button";
 import { format } from "date-fns";

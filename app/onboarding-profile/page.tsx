@@ -16,12 +16,12 @@ import SelectPreferGender from '@/components/onboarding-profile/SelectPreferGend
 import SelectAge from '@/components/onboarding-profile/SelectAge'
 import SelectPreferActivities from '@/components/onboarding-profile/SelectPreferActivities'
 import axios, { AxiosError } from 'axios'
-import { accessTokenAtom, userIdAtom } from '../login/page'
 import { useAtomValue } from 'jotai'
 import { ErrorResponse } from '../types/diary'
 import axiosInstance from '@/apiConfig'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import useAuthStore from '@/hooks/useAuthStore'
 
 export interface ActivityType {
     label: string;
@@ -81,8 +81,8 @@ const OnboadringProfile: NextPage = () => {
     const [ampm, setAmpm] = useState<"AM" | "PM">("AM");
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const userId = useAtomValue(userIdAtom);
-    const accessToken = useAtomValue(accessTokenAtom);
+    const userId = useAuthStore((set) => set.userId);
+    const accessToken = useAuthStore((set) => set.accessToken)
     const [progress, setProgress] = useState(0);
 
     const totalSteps = 5
