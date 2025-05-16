@@ -62,7 +62,7 @@ const DailyUserContent: React.FC = () => {
 
         setIsLoading(true);
         setErrorMessage(null);
-
+        // meditations/get-recommendations?userId=?????&date=????
         try {
             const res = await axiosInstance.get<DiaryDto>(
                 `/diary/${userId}/${selectedDate}`,
