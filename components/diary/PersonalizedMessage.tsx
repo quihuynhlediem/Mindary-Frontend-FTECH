@@ -36,4 +36,4 @@ const PersonalizedMessage: React.FC<PersonalizedMessageProps> = ({ result }) => 
   );
 };
 
-export default PersonalizedMessage;
+// export default PersonalizedMessage;

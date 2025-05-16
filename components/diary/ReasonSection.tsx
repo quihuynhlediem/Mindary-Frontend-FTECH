@@ -34,7 +34,7 @@ const ReasonSection: React.FC<ReasonSectionProps> = ({ result }) => {
   // Handle invalid or missing data
   if (
     !result ||
-    !result.correlationObjects 
+    !result.correlationObjects
   ) {
     return (
       <div className="py-8 text-center">
@@ -74,11 +74,10 @@ const ReasonSection: React.FC<ReasonSectionProps> = ({ result }) => {
         {reasons.map((reason, index) => (
           <div
             key={index}
-            className={`${reason.bgColor} p-4 rounded-lg flex flex-col items-center relative ${
-              index === reasons.length - 1 && reasons.length % 2 !== 0
+            className={`${reason.bgColor} p-4 rounded-lg flex flex-col items-center relative ${index === reasons.length - 1 && reasons.length % 2 !== 0
                 ? "md:col-span-2"
                 : ""
-            }`}
+              }`}
           >
             <h3 className="text-xl font-semibold mb-2 text-left w-full">
               {reason.name}
@@ -116,4 +115,4 @@ const ReasonSection: React.FC<ReasonSectionProps> = ({ result }) => {
   );
 };
 
-export default ReasonSection;
+// export default ReasonSection;
