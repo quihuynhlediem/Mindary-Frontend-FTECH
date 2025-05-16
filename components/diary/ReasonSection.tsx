@@ -75,8 +75,8 @@ const ReasonSection: React.FC<ReasonSectionProps> = ({ result }) => {
           <div
             key={index}
             className={`${reason.bgColor} p-4 rounded-lg flex flex-col items-center relative ${index === reasons.length - 1 && reasons.length % 2 !== 0
-                ? "md:col-span-2"
-                : ""
+              ? "md:col-span-2"
+              : ""
               }`}
           >
             <h3 className="text-xl font-semibold mb-2 text-left w-full">
@@ -115,4 +115,4 @@ const ReasonSection: React.FC<ReasonSectionProps> = ({ result }) => {
   );
 };
 
-// export default ReasonSection;
+export default ReasonSection;

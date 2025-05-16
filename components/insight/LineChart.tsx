@@ -10,6 +10,11 @@ import {
   Plugin,
 } from 'chart.js';
 import { Scatter } from 'react-chartjs-2';
+import badMood from '/public/bad-mood.svg';
+import notGoodMood from '/public/not-good-mood.svg';
+import okayMood from '/public/okay-mood.svg';
+import goodMood from '/public/good-mood.svg';
+import greatMood from '/public/great-mood.svg';
 
 interface LineChartProps {
   emotionLevel: number[],
@@ -18,28 +23,30 @@ interface LineChartProps {
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
-const emojiIcons = [
-  new Image(),
-  new Image(),
-  new Image(),
-  new Image(),
-  new Image(),
-];
+// const emojiIcons = [
+//   new Image(),
+//   new Image(),
+//   new Image(),
+//   new Image(),
+//   new Image(),
+// ];
 
-emojiIcons[0].src = '/bad-mood.svg';
-emojiIcons[1].src = '/not-good-mood.svg';
-emojiIcons[2].src = '/okay-mood.svg';
-emojiIcons[3].src = '/good-mood.svg';
-emojiIcons[4].src = '/great-mood.svg';
+// emojiIcons[0].src = '/bad-mood.svg';
+// emojiIcons[1].src = '/not-good-mood.svg';
+// emojiIcons[2].src = '/okay-mood.svg';
+// emojiIcons[3].src = '/good-mood.svg';
+// emojiIcons[4].src = '/great-mood.svg';
+
+const emojiIcons = [badMood, notGoodMood, okayMood, goodMood, greatMood];
 
 // Plugin to draw emoji icons on y-axis
 const customYAxisIconPlugin: Plugin = {
   id: 'customYAxisIconPlugin',
   afterDraw(chart) {
     const yAxis = chart.scales['y'];
-    console.log(yAxis);
+    // console.log(yAxis);
     const ctx = chart.ctx;
-    console.log(ctx);
+    // console.log(ctx);
 
     yAxis.ticks.forEach((tick, index) => {
       const y = yAxis.getPixelForTick(index);

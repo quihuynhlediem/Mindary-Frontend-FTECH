@@ -28,7 +28,7 @@ const EmptyDiary = () => {
 				<p className="text-base leading-7 text-gray-600">
 					You have not written anything here yet!
 				</p>
-				<Button className="" type="button" onClick={() => router.push(`/diary/${selectedDate}/input`)}>
+				<Button className="" type="button" onClick={() => router.push(`/diary/${chosenDate}/input`)}>
 					Start Writing
 				</Button>
 			</div>

@@ -146,28 +146,31 @@ const MoodChart = () => {
           <BarChart dateLabel={dateLabel} emotionLevel={emotionLevel} />
         </div>
       </div>
-      <div className="mx-4 px-4 py-4 bg-white rounded-lg flex flex-col justify-start items-center gap-4">
-        <div className="text-black text-xl font-bold font-sans leading-7 self-start">Mood Chart</div>
-        <div className="self-stretch h-0 relative">
-          <div className="w-[100%] h-0 left-0 top-0 absolute outline outline-1 outline-offset-[-0.50px] outline-[#EEEEEE]"></div>
-        </div>
-        <div className="self-stretch inline-flex justify-between items-center">
-          <button onClick={handlePrevious} className="w-6 h-6 relative">
-            <ChevronLeft className="w-8" />
-          </button>
-          <div className="flex-1 text-center justify-center text-Text-General-Text-Light text-lg font-semibold font-sans leading-relaxed">
-            {new Date(subDays(endDate, 6)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-          </div>
-          <button onClick={handleNext} disabled={isNextDisabled} className="w-6 h-6 relative">
-            <ChevronRight className="w-8" />
-          </button>
-        </div>
 
-        {/* Chart Main Part */}
-        <div>
-          <LineChart dateLabel={dateLabel} emotionLevel={emotionLevel} />
-        </div>
-      </div></>)
+      {/* <div className="mx-4 px-4 py-4 bg-white rounded-lg flex flex-col justify-start items-center gap-4">
+  <div className="text-black text-xl font-bold font-sans leading-7 self-start">Mood Chart</div>
+  <div className="self-stretch h-0 relative">
+    <div className="w-[100%] h-0 left-0 top-0 absolute outline outline-1 outline-offset-[-0.50px] outline-[#EEEEEE]"></div>
+  </div>
+  <div className="self-stretch inline-flex justify-between items-center">
+    <button onClick={handlePrevious} className="w-6 h-6 relative">
+      <ChevronLeft className="w-8" />
+    </button>
+    <div className="flex-1 text-center justify-center text-Text-General-Text-Light text-lg font-semibold font-sans leading-relaxed">
+      {new Date(subDays(endDate, 6)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+    </div>
+    <button onClick={handleNext} disabled={isNextDisabled} className="w-6 h-6 relative">
+      <ChevronRight className="w-8" />
+    </button>
+  </div>
+
+  <div>
+    <LineChart dateLabel={dateLabel} emotionLevel={emotionLevel} />
+  </div>
+ </div > */}
+
+    </>)
 }
 
 export default MoodChart;
+

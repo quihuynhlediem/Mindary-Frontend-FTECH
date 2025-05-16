@@ -63,4 +63,4 @@ const Tips: React.FC<RecommendationSectionProps> = ({ result }) => {
     );
 };
 
-// export default Tips;
+export default Tips;

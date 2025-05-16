@@ -37,4 +37,4 @@ const StatusMessage: React.FC<StatusMessageProps> = ({ result }) => {
   );
 };
 
-// export default StatusMessage;
+export default StatusMessage;
