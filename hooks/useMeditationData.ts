@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { MeditationProp } from "@/app/types/meditation";
-import { fetchMeditations } from "@/app/actions";
 import { useInView } from "react-intersection-observer";
-import { set } from "date-fns";
+import axiosInstance from "@/apiConfig";
 
 export function useMeditationData(accessToken: { accessToken: string | null }) {
   const [meditations, setMeditations] = useState<MeditationProp[]>([]);
@@ -19,10 +18,14 @@ export function useMeditationData(accessToken: { accessToken: string | null }) {
 
     setLoading(true);
     try {
-      const newData = await fetchMeditations(page, accessToken);
-      console.log(newData.length);
-      if (newData && newData.length > 0) {
-        setMeditations(prev => [...prev, ...newData]);
+      const newData = await axiosInstance.get(`/meditations/load-data?page=${page}&limit=10`, {
+            headers: {
+                "Authorization": `Bearer ${accessToken.accessToken}`
+            },
+        });
+      console.log(newData.data.length);
+      if (newData.data && newData.data.length > 0) {
+        setMeditations(prev => [...prev, ...newData.data]);
         setPage(prev => prev + 1);
       } else {
         setHasMore(false);
@@ -33,11 +36,6 @@ export function useMeditationData(accessToken: { accessToken: string | null }) {
       setLoading(false);
     }
   };
-
-  // // Initial load
-  // useEffect(() => {
-  //   loadMoreMeditations();
-  // });
 
   // Load more when scrolled to bottom
   useEffect(() => {
