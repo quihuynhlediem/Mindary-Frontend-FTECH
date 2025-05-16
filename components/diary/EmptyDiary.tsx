@@ -3,12 +3,13 @@ import React from "react";
 import loudlyCrying from "@/public/loudly-crying.json";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import { Router } from "lucide-react";
+import { useAtomValue } from "jotai";
 import useUserStore from "@/hooks/useUserStore";
 
 const EmptyDiary = () => {
 	const router = useRouter()
-	const selectedDate = useUserStore((state) => state.selectedDate);
-	// const setSelectedDate = useUserStore((state) => state.setSelectedDate);
+	const chosenDate = useUserStore((state) => state.selectedDate);
 	return (
 		<main className="grid min-h-full place-items-center bg-white px-6 py-12 my-auto sm:py-32 lg:px-8">
 			<div className="text-center flex flex-col space-y-6">
