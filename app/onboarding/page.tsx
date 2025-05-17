@@ -42,14 +42,6 @@ const Onboarding = () => {
     const [current, setCurrent] = React.useState(0)
     const router = useRouter()
 
-
-    useEffect(() => {
-        const hasVisited = localStorage.getItem('hasVisited');
-        if (hasVisited) {
-            router.push('/');
-        }
-    }, [router]);
-
     useEffect(() => {
         if (!api) return
         setCurrent(api.selectedScrollSnap())
