@@ -20,15 +20,17 @@ interface EnvConfig {
 
 // Access environment variables with type safety
 const env: EnvConfig = {
-    PRODUCTION: process.env.PRODUCTION || '0',
-    LOCALHOST: process.env.LOCALHOST || 'http://localhost:8080',
-    PROD: process.env.PROD || 'http://mindary-alb-1862688611.ap-southeast-2.elb.amazonaws.com',
+    PRODUCTION: process.env.NEXT_PUBLIC_PRODUCTION || '0',
+    LOCALHOST: process.env.NEXT_PUBLIC_LOCALHOST || 'http://localhost:8080',
+    PROD: process.env.NEXT_PUBLIC_PROD || 'http://mindary-alb-1862688611.ap-southeast-2.elb.amazonaws.com',
 };
 
 const axiosInstance = axios.create({
     baseURL: env.PRODUCTION !== '0' ? `${env.PROD}/api/v1` : `${env.LOCALHOST}/api/v1`,
 })
 
+// Log to verify environment variables
+console.log("Environment Variables:", env);
 
 const refreshAccessToken = async (refreshToken: string) => {
     const setAuth = useAuthStore((state: any) => state.setAuthTokens);
