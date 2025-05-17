@@ -20,6 +20,7 @@ import { ErrorResponse } from '../types/diary'
 import axiosInstance from '@/apiConfig'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from 'next/navigation'
+import useAuthStore from '@/hooks/useAuthStore'
 
 const signupSchema = z.object({
     firstName: z.string().min(2, {
@@ -55,6 +56,7 @@ const page = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const { toast } = useToast()
     const router = useRouter()
+    const setAuthTokens = useAuthStore((state) => state.setAuthTokens)
     const UNIT_8_ARRAY: number = parseInt(process.env.UNIT_8_ARRAY || "32")
 
     const form = useForm<z.infer<typeof signupSchema>>({
@@ -133,7 +135,7 @@ const page = () => {
             const encryptedPrivateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(encryptedPrivateKey)));
             console.log(privateKey)
 
-            await axiosInstance.post("/auth/signup", {
+            const response = await axiosInstance.post("/auth/signup", {
                 username: values.username,
                 firstName: values.firstName,
                 lastName: values.lastName,
@@ -145,25 +147,58 @@ const page = () => {
                 privateKeyIv: privateKeyIvBase64
             })
 
-            toast({
-                variant: "success",
-                title: "Registration Successful",
-                description: "Please login to your account.",
-            })
+            if (response.data) {
+                setAuthTokens(
+                    response.data.userId,
+                    response.data.accessToken,
+                    response.data.refreshToken,
+                    response.data.salt,
+                    response.data.username,
+                    "true"
+                )
 
-            router.push("/onboarding-profile");
+                toast({
+                    variant: "success",
+                    title: "Registration Successful",
+                    description: "Your account has been created successfully!",
+                })
+
+                router.push("/onboarding-profile")
+            }
         } catch (error: any) {
-            console.error('Registration error:', error);
+            console.error('Registration error:', error)
 
             if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError<ErrorResponse>;
-                if (axiosError.response?.data) {
-                    setErrorMessage(axiosError.response.data.message || "Registration failed. Please try again.");
+                const axiosError = error as AxiosError<ErrorResponse>
+                if (axiosError.response?.status === 409) {
+                    toast({
+                        variant: "destructive",
+                        title: "Username Already Exists",
+                        description: "This username is already taken. Please choose a different one.",
+                    })
+                    setErrorMessage("Username already exists. Please choose a different one.")
+                } else if (axiosError.response?.data) {
+                    setErrorMessage(axiosError.response.data.message || "Registration failed. Please try again.")
+                    toast({
+                        variant: "destructive",
+                        title: "Registration Failed",
+                        description: axiosError.response.data.message || "Registration failed. Please try again.",
+                    })
                 } else {
-                    setErrorMessage("An error occurred. Please try again later.");
+                    setErrorMessage("An error occurred. Please try again later.")
+                    toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: "An error occurred. Please try again later.",
+                    })
                 }
             } else {
-                setErrorMessage("An error occurred. Please try again later.");
+                setErrorMessage("An error occurred. Please try again later.")
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "An error occurred. Please try again later.",
+                })
             }
         } finally {
             setIsLoading(false)

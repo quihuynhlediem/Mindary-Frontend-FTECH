@@ -83,20 +83,19 @@ const OnboadringProfile: NextPage = () => {
     const [ampm, setAmpm] = useState<"AM" | "PM">("AM");
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const userId = useAuthStore((set) => set.userId);
-    const accessToken = useAuthStore((set) => set.accessToken);
-    const [progress, setProgress] = useState(0);
-    const firstTimeLogin = useAuthStore((state) => state.firstTimeLogin);
+    const userId = useAuthStore((state) => state.userId);
+    const accessToken = useAuthStore((state) => state.accessToken);
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
     const setFirstTimeLogin = useAuthStore((state) => state.setFirstTimeLogin);
-    const isFirstTimeLogin = useAuthStore((state) => state.firstTimeLogin);
+    const [progress, setProgress] = useState(0);
 
     const totalSteps = 5
 
     useEffect(() => {
-        if (isFirstTimeLogin!) {
-            router.push('/');
+        if (!isAuthenticated()) {
+            router.push('/login');
         }
-    })
+    }, [isAuthenticated, router]);
 
     const handleNextStep = () => {
         if (currentStep === 1) {
@@ -156,13 +155,19 @@ const OnboadringProfile: NextPage = () => {
                 },
             )
 
-            // if (response.status === 200) {
-            //     console.log("success")
-            // }
+            setProgress(100)
 
-            setProgress(100);
-            setFirstTimeLogin("false");
-            router.push('/')
+            if (response.status === 200) {
+                console.log("Profile setup successful")
+
+                // Wait to show the completion screen
+                setTimeout(() => {
+                    // Only set firstTimeLogin to false after successful profile setup
+                    setFirstTimeLogin("false")
+                    // Then redirect to diary page
+                    router.push('/diary')
+                }, 1500)
+            }
         } catch (error: any) {
             if (axios.isAxiosError(error)) {
                 const axiosError = error as AxiosError<ErrorResponse>
@@ -252,7 +257,9 @@ const OnboadringProfile: NextPage = () => {
                             pathColor: "#70c2d5",
                             textColor: "#333",
                             trailColor: "#e6e6e6",
+                            pathTransitionDuration: 0.5,
                         })}
+                        className="w-64 h-64 mx-auto"
                     />
                 </div>
             )}

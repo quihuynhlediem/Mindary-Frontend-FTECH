@@ -2,16 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap");
 
 body {
-  font-family: 'Urbanist', Arial, Helvetica, sans-serif;
+  font-family: "Urbanist", Arial, Helvetica, sans-serif;
+  font-family: "Urbanist", Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
-	.text-balance {
-		text-wrap: balance;
-	}
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
 @layer base {
@@ -40,37 +42,42 @@ body {
     --ring: 0 0% 3.9%;
     --radius: 0.5rem;
     /* --primary: #7EC8D3; */
-    --secondary: #00A5E3;
-    --danger: #F784AD;
+    --secondary: #00a5e3;
+    --danger: #f784ad;
     --background: #212429;
+    --chart-1: #7ec8d3;
+    --chart-2: #00a5e3;
+    --chart-3: #ffc02d;
+    --chart-4: #ff981f;
+    --chart-5: #f54336;
   }
 
-	.dark {
-		--background: 0 0% 3.9%;
-		--foreground: 0 0% 98%;
-		--card: 0 0% 3.9%;
-		--card-foreground: 0 0% 98%;
-		--popover: 0 0% 3.9%;
-		--popover-foreground: 0 0% 98%;
-		--primary: 188 49% 66%;
-		--primary-foreground: 0 0% 98%;
-		--secondary: 0 0% 14.9%;
-		--secondary-foreground: 0 0% 98%;
-		--muted: 0 0% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
-		--accent: 0 0% 14.9%;
-		--accent-foreground: 0 0% 98%;
-		--destructive: 347 77% 72%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 0 0% 14.9%;
-		--input: 0 0% 14.9%;
-		--ring: 0 0% 83.1%;
-		--chart-1: 220 70% 50%;
-		--chart-2: 160 60% 45%;
-		--chart-3: 30 80% 55%;
-		--chart-4: 280 65% 60%;
-		--chart-5: 340 75% 55%;
-	}
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 188 49% 66%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 347 77% 72%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: #7ec8d3;
+    --chart-2: #00a5e3;
+    --chart-3: #ffc02d;
+    --chart-4: #ff981f;
+    --chart-5: #f54336;
+  }
 }
 
 /* @layer base {
@@ -84,53 +91,53 @@ body {
 } */
 
 @layer components {
-	.text-display {
-		font-size: 40px;
-		line-height: 2.25rem;
-		font-weight: bold;
-	}
+  .text-display {
+    font-size: 40px;
+    line-height: 2.25rem;
+    font-weight: bold;
+  }
 
-	.text-headline-1 {
-		font-size: 28px;
-		line-height: 2rem;
-		font-weight: bold;
-	}
+  .text-headline-1 {
+    font-size: 28px;
+    line-height: 2rem;
+    font-weight: bold;
+  }
 
-	.text-headline-2 {
-		font-size: 22px;
-		line-height: 2rem;
-		font-weight: 600;
-	}
+  .text-headline-2 {
+    font-size: 22px;
+    line-height: 2rem;
+    font-weight: 600;
+  }
 
-	.text-headline-3 {
-		font-size: 18px;
-		line-height: 2.25rem;
-		font-weight: 600;
-	}
+  .text-headline-3 {
+    font-size: 18px;
+    line-height: 2.25rem;
+    font-weight: 600;
+  }
 
-	.text-subtitle-1 {
-		font-size: 16px;
-		line-height: 2.25rem;
-		font-weight: 600;
-	}
+  .text-subtitle-1 {
+    font-size: 16px;
+    line-height: 2.25rem;
+    font-weight: 600;
+  }
 
-	.text-subtitle-2 {
-		font-size: 14px;
-		line-height: 2.25rem;
-		font-weight: 500;
-	}
+  .text-subtitle-2 {
+    font-size: 14px;
+    line-height: 2.25rem;
+    font-weight: 500;
+  }
 
-	.text-body-1 {
-		font-size: 16px;
-		line-height: 1.25rem;
-		font-weight: normal;
-	}
+  .text-body-1 {
+    font-size: 16px;
+    line-height: 1.25rem;
+    font-weight: normal;
+  }
 
-	.text-body-2 {
-		font-size: 14px;
-		line-height: 0.875rem;
-		font-weight: normal;
-	}
+  .text-body-2 {
+    font-size: 14px;
+    line-height: 0.875rem;
+    font-weight: normal;
+  }
 }
 
 /* @layer base {
@@ -144,14 +151,14 @@ body {
 } */
 
 .scrollbar-hide::-webkit-scrollbar {
-	display: none;
+  display: none;
 }
 
 .scrollbar-hide {
-	-ms-overflow-style: none;
-	/* Internet Explorer 10+ */
-	scrollbar-width: none;
-	/* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* @layer base {
@@ -162,4 +169,89 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+} */
+
+.apexcharts-datalabels-group {
+  position: relative;
+}
+
+/* Target each label based on its text content */
+.apexcharts-datalabels-group text:contains("Bad")::before,
+.apexcharts-datalabels-group text:contains("Not Good")::before,
+.apexcharts-datalabels-group text:contains("Okay")::before,
+.apexcharts-datalabels-group text:contains("Good")::before,
+.apexcharts-datalabels-group text:contains("Great")::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* Target the ApexCharts label text elements */
+.apexcharts-datalabels-group text {
+  position: relative;
+  padding-left: 20px; /* Space for the icon */
+}
+
+/* Add SVG icons as pseudo-elements */
+/* .apexcharts-datalabels-group text:nth-child(1)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url("/Mindary-Frontend-FTECH/public/great-mood.svg") no-repeat center;
+  background-size: contain;
+}
+
+.apexcharts-datalabels-group text:nth-child(2)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url("/Mindary-Frontend-FTECH/public/good-mood.svg") no-repeat center;
+  background-size: contain;
+}
+
+.apexcharts-datalabels-group text:nth-child(3)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url("/Mindary-Frontend-FTECH/public/okay-mood.svg") no-repeat center;
+  background-size: contain;
+}
+
+.apexcharts-datalabels-group text:nth-child(4)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url("/Mindary-Frontend-FTECH/public/not-good-mood.svg") no-repeat center;
+  background-size: contain;
+}
+
+.apexcharts-datalabels-group text:nth-child(5)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url("/Mindary-Frontend-FTECH/public/bad-mood.svg") no-repeat center;
+  background-size: contain;
 } */

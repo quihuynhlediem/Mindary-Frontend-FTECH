@@ -16,7 +16,7 @@ const Header: React.FC<PageProps> = ({ page }) => {
     router.replace('/');
   }
   return (
-    <div className="w-full px-4 py-3 bg-foreground flex justify-start items-center">
+    <div className="w-full px-4 py-3 bg-[#FFFFFF] flex justify-start items-center">
       <div onClick={handleBackToHome} className="w-7 flex justify-end items-center gap-5">
         <div className="w-7 h-7 relative overflow-hidden">
           <ChevronLeft className="w-8" />
