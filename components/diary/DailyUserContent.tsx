@@ -51,6 +51,7 @@ const DailyUserContent: React.FC = () => {
     const [diary, setDiary] = useState<DiaryDto | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const currentDiaryId = useAuthStore((state) => state.currentDiaryId);
     const router = useRouter();
 
     const fetchDiary = useCallback(async () => {
@@ -65,7 +66,7 @@ const DailyUserContent: React.FC = () => {
         // meditations/get-recommendations?userId=?????&date=????
         try {
             const res = await axiosInstance.get<DiaryDto>(
-                `/diary/${userId}/${selectedDate}`,
+                `/diary/${currentDiaryId!}/${userId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,

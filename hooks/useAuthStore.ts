@@ -10,12 +10,14 @@ interface AuthStore {
     decryptKey: string | null;
     username: string | null;
     firstTimeLogin: string | null;
+    currentDiaryId: string | null;
     setFirstTimeLogin: (firstTimeLogin: string) => void;
     setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string, username: string, firstTimeLogin: string) => void;
     setDecryptKey: (decryptKey: string) => void;
     clearAuthTokens: () => void;
     isAuthenticated: () => boolean;
     isFirstTimeLogin: () => boolean;
+    setCurrentDiaryId: (currentDiaryId: string) => void;
 }
 
 const useAuthStore = create<AuthStore>((set, get) => {
@@ -26,6 +28,7 @@ const useAuthStore = create<AuthStore>((set, get) => {
     let decryptKey: string | null = null;
     let username: string | null = null
     let firstTimeLogin: string | null = null;
+    let currentDiaryId: string | null = null;
 
     if (typeof window !== 'undefined') {
         // Only access localStorage in the browser environment
@@ -36,6 +39,7 @@ const useAuthStore = create<AuthStore>((set, get) => {
         decryptKey = Cookies.get('decryptKey') || null;
         username = Cookies.get('username') || null;
         firstTimeLogin = Cookies.get('firstTimeLogin') || null;
+        currentDiaryId = Cookies.get('currentDiaryId') || null;
     }
 
     return {
@@ -46,6 +50,7 @@ const useAuthStore = create<AuthStore>((set, get) => {
         decryptKey: decryptKey || null,
         username: username || null,
         firstTimeLogin: firstTimeLogin || null,
+        currentDiaryId: currentDiaryId || null,
 
         setFirstTimeLogin: (firstTimeLogin: string) => {
             if (typeof window !== "undefined") {
@@ -90,6 +95,13 @@ const useAuthStore = create<AuthStore>((set, get) => {
                 return true;
             }
             return false;
+        },
+
+        setCurrentDiaryId: (currentDiaryId: string | null) => {
+            if (typeof window !== "undefined" && currentDiaryId) {
+                Cookies.set('currentDiaryId', currentDiaryId, { expires: 1, secure: false, sameSite: "Strict" })
+            }
+            set({ currentDiaryId })
         }
     };
 });

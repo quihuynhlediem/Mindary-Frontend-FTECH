@@ -22,13 +22,14 @@ const Diary = () => {
     const chosenDate = useUserStore((state) => state.selectedDate);
     const router = useRouter();
     const [showAnalysis, setShowAnalysis] = useState<boolean>(false);
-    const [currentDiaryId, setCurrentDiaryId] = useState<string | null>(null);
     const [isAnalysisLoading, setIsAnalysisLoading] = useState<boolean>(false);
     const [isContentLoading, setIsContentLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [diaryExists, setDiaryExists] = useState<boolean>(false);
     const [isAnalyzed, setIsAnalyzed] = useState<boolean>(false);
     const diaryContent = useUserStore((state) => state.diaries)
+    const setCurrentDiaryId = useAuthStore((state) => state.setCurrentDiaryId)
+    const currentDiaryId = useAuthStore((state) => state.currentDiaryId)
 
     // Redirect to login page
     useEffect(() => {
@@ -60,11 +61,12 @@ const Diary = () => {
             setDiaryExists(true);
             setIsAnalyzed(checkAnalysisResponse.data.analyzed);
             setCurrentDiaryId(checkAnalysisResponse.data.diaryId)
+
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 404) {
                     setDiaryExists(false);
-                    setCurrentDiaryId(null);
+                    setCurrentDiaryId("");
                     setIsAnalyzed(false);
 
                 } else {
@@ -96,7 +98,8 @@ const Diary = () => {
             )
 
             const markDiaryAsAnalysis = await axiosInstance.post(
-                `/diaries/user/${userId}/${chosenDate}/mark-is-analyzed`,
+                `/diaries/${currentDiaryId}/user/${userId}/mark-is-analyzed`,
+                {},
                 {
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -111,11 +114,13 @@ const Diary = () => {
                 duration: 3000
             })
 
+            setIsAnalyzed(true)
+
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 404) {
                     setDiaryExists(false);
-                    setCurrentDiaryId(null);
+                    setCurrentDiaryId("");
                     setIsAnalyzed(false);
 
                 } else {
@@ -142,7 +147,7 @@ const Diary = () => {
     };
 
     return (
-        <div className='relative min-h-full max-w-screen w-screen h-screen px-4 py-14 bg-background space-y-6'>
+        <div className='relative min-h-screen max-w-screen w-screen px-4 py-14 bg-background space-y-6'>
             <Calendar />
             {isContentLoading ? (
                 <div className="flex justify-center items-center my-48">
@@ -155,7 +160,7 @@ const Diary = () => {
                     <DailyUserContent />
                     <Button
                         onClick={() => setShowAnalysis(false)}
-                        className="bg-primary-hover text-gray-700 p-2 rounded hover:bg-primary self-start"
+                        className="bg-primary-hover text-white p-2 rounded hover:bg-primary self-start"
                     >
                         Back to Diary
                     </Button>
