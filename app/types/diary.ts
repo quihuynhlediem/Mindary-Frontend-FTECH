@@ -53,19 +53,19 @@ export interface UserEncryptionData {
     privateKeyIv: string;
 }
 
-export interface Datum {
-    imageLink: any[];
-    _id: string;
-    senderId: string;
-    content: string;
-    moodObjects: MoodObject[];
-    correlationObjects: Array<CorrelationObject[]>;
-    symptomObjects: Array<SymptomObject[]>;
-    recommendations: Recommendation[];
-    createdAt: Date;
-    updatedAt: Date;
-    __v: number;
-}
+// export interface Datum {
+//     imageLink: any[];
+//     _id: string;
+//     senderId: string;
+//     content: string;
+//     moodObjects: MoodObject[];
+//     correlationObjects: Array<CorrelationObject[]>;
+//     symptomObjects: Array<SymptomObject[]>;
+//     recommendations: Recommendation[];
+//     createdAt: Date;
+//     updatedAt: Date;
+//     __v: number;
+// }
 
 export interface CorrelationObject {
     name: string;
