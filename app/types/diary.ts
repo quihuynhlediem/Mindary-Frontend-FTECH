@@ -11,6 +11,7 @@ export interface Diaries {
 
 export interface IsAnalysisDto {
     analyzed: boolean;
+    diaryId: string;
 }
 
 export interface ErrorResponse {

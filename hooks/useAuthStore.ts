@@ -9,10 +9,13 @@ interface AuthStore {
     salt: string | null;
     decryptKey: string | null;
     username: string | null;
-    setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string, username: string) => void;
+    firstTimeLogin: string | null;
+    setFirstTimeLogin: (firstTimeLogin: string) => void;
+    setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string, username: string, firstTimeLogin: string) => void;
     setDecryptKey: (decryptKey: string) => void;
     clearAuthTokens: () => void;
     isAuthenticated: () => boolean;
+    isFirstTimeLogin: () => boolean;
 }
 
 const useAuthStore = create<AuthStore>((set, get) => {
@@ -22,6 +25,7 @@ const useAuthStore = create<AuthStore>((set, get) => {
     let salt: string | null = null;
     let decryptKey: string | null = null;
     let username: string | null = null
+    let firstTimeLogin: string | null = null;
 
     if (typeof window !== 'undefined') {
         // Only access localStorage in the browser environment
@@ -31,6 +35,7 @@ const useAuthStore = create<AuthStore>((set, get) => {
         salt = Cookies.get('salt') || null;
         decryptKey = Cookies.get('decryptKey') || null;
         username = Cookies.get('username') || null;
+        firstTimeLogin = Cookies.get('firstTimeLogin') || null;
     }
 
     return {
@@ -40,16 +45,25 @@ const useAuthStore = create<AuthStore>((set, get) => {
         salt: salt || null,
         decryptKey: decryptKey || null,
         username: username || null,
-        setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string, username: string) => {
-            console.debug(username)
+        firstTimeLogin: firstTimeLogin || null,
+
+        setFirstTimeLogin: (firstTimeLogin: string) => {
+            if (typeof window !== "undefined") {
+                Cookies.set('firstTimeLogin', firstTimeLogin, { expires: 1, secure: false, sameSite: "Strict" })
+            }
+            set({ firstTimeLogin })
+        },
+
+        setAuthTokens: (userId: string, accessToken: string, refreshToken: string, salt: string, username: string, firstTimeLogin: string) => {
             if (typeof window !== 'undefined') {
                 Cookies.set('userId', userId, { expires: 1, secure: true, sameSite: "Strict" });
                 Cookies.set('accessToken', accessToken, { expires: 1, secure: true, sameSite: "Strict" });
                 Cookies.set('refreshToken', refreshToken, { expires: 1, secure: true, sameSite: "Strict" });
                 Cookies.set('salt', salt, { expires: 1, secure: true, sameSite: "Strict" });
-                Cookies.set('username', username, { expires: 1, secure: false, sameSite: "Strict" })
+                Cookies.set('username', username, { expires: 1, secure: false, sameSite: "Strict" });
+                Cookies.set('firstTimeLogin', firstTimeLogin, { expires: 1, secure: false, sameSite: "Strict" })
             }
-            set({ userId, accessToken, refreshToken, salt, username });
+            set({ userId, accessToken, refreshToken, salt, username, firstTimeLogin });
         },
         setDecryptKey: (decryptKey: string) => {
             Cookies.set('decryptKey', decryptKey, { expires: 1, secure: true, sameSite: "Strict" })
@@ -62,12 +76,21 @@ const useAuthStore = create<AuthStore>((set, get) => {
                 Cookies.remove('refreshToken');
                 Cookies.remove('salt');
                 Cookies.remove('username')
+                Cookies.remove('firstTimeLogin')
             }
-            set({ userId: null, accessToken: null, refreshToken: null, salt: null, username: null });
+            set({ userId: null, accessToken: null, refreshToken: null, salt: null, username: null, firstTimeLogin: null });
         },
+
         isAuthenticated: () => {
             return !!get().accessToken;
         },
+
+        isFirstTimeLogin: () => {
+            if (get().firstTimeLogin === "true") {
+                return true;
+            }
+            return false;
+        }
     };
 });
 

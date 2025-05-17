@@ -18,6 +18,7 @@ import Link from "next/link"
 import axiosInstance from '@/apiConfig'
 import useAuthStore from '@/hooks/useAuthStore'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { useRouter } from 'next/navigation'
 
 const loginSchema = z.object({
     email: z.string().email({
@@ -30,6 +31,7 @@ const page = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const { toast } = useToast()
     const setAuthTokens = useAuthStore((state) => state.setAuthTokens)
+    const router = useRouter();
 
     // Form setup
     const form = useForm<z.infer<typeof loginSchema>>({
@@ -52,18 +54,18 @@ const page = () => {
             })
 
             // Store authentication tokens
-            const { userId, accessToken, refreshToken, salt, username } = response.data
-            console.info(username)
-            setAuthTokens(userId, accessToken, refreshToken, salt, username)
+            const { userId, accessToken, refreshToken, salt, username, firstTimeLogin } = response.data
+            setAuthTokens(userId, accessToken, refreshToken, salt, username, firstTimeLogin)
 
             toast({
-                variant: "default",
+                variant: "success",
                 title: "Login Successful",
                 description: "Welcome back!"
             })
 
             // Redirect to dashboard
-            // window.location.href = "/"
+
+            window.location.href = "/"
         } catch (error: any) {
             console.error('Login error:', error)
 

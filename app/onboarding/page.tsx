@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React, { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -10,6 +10,7 @@ import {
     CarouselItem,
     type CarouselApi,
 } from "@/components/ui/carousel"
+import { useRouter } from "next/navigation"
 
 // Define the structure of our carousel items
 interface CarouselItemData {
@@ -36,11 +37,20 @@ const carouselData: CarouselItemData[] = [
     },
 ]
 
-const onboarding = () => {
-    const [api, setApi] = React.useState<CarouselApi>()
+const Onboarding = () => {
+    const [api, setApi] = useState<CarouselApi>()
     const [current, setCurrent] = React.useState(0)
+    const router = useRouter()
 
-    React.useEffect(() => {
+
+    useEffect(() => {
+        const hasVisited = localStorage.getItem('hasVisited');
+        if (hasVisited) {
+            router.push('/');
+        }
+    }, [router]);
+
+    useEffect(() => {
         if (!api) return
         setCurrent(api.selectedScrollSnap())
         api.on("select", () => {
@@ -53,10 +63,10 @@ const onboarding = () => {
     }, [api])
 
     const handleSkip = React.useCallback(() => {
-        // Placeholder function for navigation
-        console.log("Navigating to new page...")
-        // e.g. router.push('/next-page')
-    }, [])
+        // Mark the user as having visited and navigate to signup
+        localStorage.setItem('hasVisited', 'true')
+        router.push('/signup')
+    }, [router])
 
     const renderDots = () => {
         return carouselData.map((_, index) => (
@@ -72,10 +82,10 @@ const onboarding = () => {
 
     return (
         <div className="relative w-[430px] h-[932px] overflow-hidden bg-white">
-            <div className="absolute w-[1000px] h-[1000px] bg-[#7ec8d3] rounded-full -top-[500px] -left-[285px]"/>
+            <div className="absolute w-[1000px] h-[1000px] bg-primary-hover rounded-full -top-[500px] -left-[285px]" />
 
             {/* Main carousel content */}
-            <div className="relative top-[500px] flex flex-col items-center justify-center p-6 ">
+            <div className="relative top-[500px] flex flex-col items-center justify-center p-6">
                 <Carousel setApi={setApi} className="w-full">
                     <CarouselContent>
                         {carouselData.map((item, index) => (
@@ -83,10 +93,10 @@ const onboarding = () => {
                                 <Card className="border-none rounded-none w-full h-full shadow-none bg-transparent">
                                     <CardContent className="flex flex-col items-center justify-center p-6">
                                         <h1 className="text-2xl font-bold mb-3 text-center">
-                                            { item.title }
+                                            {item.title}
                                         </h1>
                                         <p className="text-center text-sm text-muted-foreground">
-                                            { item.description }
+                                            {item.description}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -96,22 +106,26 @@ const onboarding = () => {
                 </Carousel>
 
                 {/* Carousel dots */}
-                <div className="py-4 flex justify-center space-x-2">{ renderDots() }</div>
+                <div className="py-4 flex justify-center space-x-2">{renderDots()}</div>
 
                 <div className="mt-4 flex justify-between w-full max-w-sm">
-                    <Button onClick={ handleSkip } variant="outline" className={`${current === carouselData.length - 1 ? "hidden" : ""} text-base w-[180px] rounded-full p-6`}>
+                    <Button
+                        onClick={handleSkip}
+                        variant="outline"
+                        className={`${current === carouselData.length - 1 ? "hidden" : ""} text-base w-[180px] rounded-full p-6`}
+                    >
                         Skip
                     </Button>
                     <Button
-                        onClick={ current === carouselData.length - 1 ? handleSkip : handleContinue }
+                        onClick={current === carouselData.length - 1 ? handleSkip : handleContinue}
                         className={`${current === carouselData.length - 1 ? "w-full" : "w-[180px]"} text-base rounded-full p-6`}
                     >
                         {current === carouselData.length - 1 ? "Let's Get Started" : "Continue"}
-          </Button>
+                    </Button>
                 </div>
             </div>
         </div>
     )
 }
 
-export default onboarding
+export default Onboarding
