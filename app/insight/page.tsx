@@ -5,6 +5,8 @@ import Header from '@/components/general/Header';
 import DataBlock from '@/components/insight/DataBlock';
 import MoodChart from '@/components/insight/MoodChart';
 import useAuthStore from '@/hooks/useAuthStore';
+import { MoodRadialChart } from '@/components/insight/RadialChart';
+import ApexRadialChart from '@/components/insight/ApexRadialChart';
 
 const Insight = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -16,29 +18,32 @@ const Insight = () => {
       router.push('/login')
     }
   }, [isAuthenticated, router])
+  {
+    // Prevent rendering while redirecting
+    if (!isAuthenticated) {
+      return null
+    }
 
-  // Prevent rendering while redirecting
-  if (!isAuthenticated) {
-    return null
-  }
+    const emojiDict = {
+      "streak": '⚡',
+      "fire": '🔥',
+      "calendar": '📆'
+    }
 
-  const emojiDict = {
-    "streak": '⚡',
-    "fire": '🔥',
-    "calendar": '📆'
-  }
+    return (
+      <div className='relative min-h-full max-w-screen min-w-screen min-h-screen py-14 bg-primary space-y-6'>
+        <Header page="Insights" />
+        <div className='px-4 flex gap-2'>
+          <DataBlock emoji={emojiDict['streak']} data={65} field='Longest streak' />
+          <DataBlock emoji={emojiDict['fire']} data={58} field='Current streak' />
+          <DataBlock emoji={emojiDict['calendar']} data={482} field='Lifetime days' />
+        </div>
+        <MoodChart />
 
-  return (
-    <div className='relative min-h-full max-w-screen w-screen h-screen py-14 bg-primary space-y-6'>
-      <Header page="Insights" />
-      <div className='px-4 flex gap-2'>
-        <DataBlock emoji={emojiDict['streak']} data={65} field='Longest streak' />
-        <DataBlock emoji={emojiDict['fire']} data={58} field='Current streak' />
-        <DataBlock emoji={emojiDict['calendar']} data={482} field='Lifetime days' />
+        <ApexRadialChart />
       </div>
-      <MoodChart />
-    </div>
-  );
+    );
+  }
 }
 
 export default Insight;
