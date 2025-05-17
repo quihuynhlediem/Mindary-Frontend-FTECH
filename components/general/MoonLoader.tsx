@@ -6,7 +6,7 @@ export default function Loader() {
             <MoonLoader
                 className=""
                 color="#5AC6C6"
-                size={20} />
+                size={5} />
         </div>
     )
 }

@@ -19,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorResponse } from '../types/diary'
 import axiosInstance from '@/apiConfig'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useRouter } from 'next/navigation'
 
 const signupSchema = z.object({
     firstName: z.string().min(2, {
@@ -53,6 +54,7 @@ const page = () => {
     const [errorMessage, setErrorMessage] = useState<string | any>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const { toast } = useToast()
+    const router = useRouter()
     const UNIT_8_ARRAY: number = parseInt(process.env.UNIT_8_ARRAY || "32")
 
     const form = useForm<z.infer<typeof signupSchema>>({
@@ -144,12 +146,12 @@ const page = () => {
             })
 
             toast({
-                variant: "default",
+                variant: "success",
                 title: "Registration Successful",
-                description: "Please check your email to verify your account.",
+                description: "Please login to your account.",
             })
 
-            // window.location.href = "/login"
+            router.push("/onboarding-profile");
         } catch (error: any) {
             console.error('Registration error:', error);
 

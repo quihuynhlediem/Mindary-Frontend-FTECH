@@ -22,6 +22,7 @@ import axiosInstance from '@/apiConfig'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import useAuthStore from '@/hooks/useAuthStore'
+import { useRouter } from 'next/navigation'
 
 export interface ActivityType {
     label: string;
@@ -38,6 +39,7 @@ interface CustomerPreference {
 }
 
 const OnboadringProfile: NextPage = () => {
+    const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1)
     const [nickname, setNickname] = useState('')
     const [gender, setGender] = useState('')
@@ -82,10 +84,19 @@ const OnboadringProfile: NextPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const userId = useAuthStore((set) => set.userId);
-    const accessToken = useAuthStore((set) => set.accessToken)
+    const accessToken = useAuthStore((set) => set.accessToken);
     const [progress, setProgress] = useState(0);
+    const firstTimeLogin = useAuthStore((state) => state.firstTimeLogin);
+    const setFirstTimeLogin = useAuthStore((state) => state.setFirstTimeLogin);
+    const isFirstTimeLogin = useAuthStore((state) => state.firstTimeLogin);
 
     const totalSteps = 5
+
+    useEffect(() => {
+        if (isFirstTimeLogin!) {
+            router.push('/');
+        }
+    })
 
     const handleNextStep = () => {
         if (currentStep === 1) {
@@ -145,11 +156,13 @@ const OnboadringProfile: NextPage = () => {
                 },
             )
 
-            if (response.status === 200) {
-                console.log("success")
-            }
+            // if (response.status === 200) {
+            //     console.log("success")
+            // }
 
-            setProgress(100)
+            setProgress(100);
+            setFirstTimeLogin("false");
+            router.push('/')
         } catch (error: any) {
             if (axios.isAxiosError(error)) {
                 const axiosError = error as AxiosError<ErrorResponse>
