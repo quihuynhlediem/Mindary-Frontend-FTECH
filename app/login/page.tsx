@@ -63,7 +63,7 @@ const page = () => {
             })
 
             // Redirect to dashboard
-            // window.location.href = "/"
+            window.location.href = "/"
         } catch (error: any) {
             console.error('Login error:', error)
 
