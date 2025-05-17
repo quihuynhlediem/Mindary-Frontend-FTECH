@@ -15,7 +15,7 @@ export default function ApexRadialChart() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [filter, setFilter] = useState<string>("week");
     const chartLabels = ["Great", "Good", "Okay", "Not Good", "Bad"];
-    const periods = ["week", "month", "year", "lifetime"];
+    const periods = ["week", "month", "year"];
     const [state, setState] = useState<{
         series: number[];
         options: ApexOptions;
@@ -84,7 +84,7 @@ export default function ApexRadialChart() {
                         },
                         total: {
                             show: true,
-                            label: '',
+                            label: 'Diaries',
                             fontSize: '18px',
                             fontWeight: 600,
                             formatter: function (w) {

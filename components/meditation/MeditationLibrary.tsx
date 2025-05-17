@@ -57,7 +57,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
   };
 
   return (
-    <div className="bg-primary dark:bg-neutral-900 m-0 p-6">
+    <div className="bg-primary min-h-screen dark:bg-neutral-900 m-0 p-6">
       <AnimatePresence>
         {active && typeof active === "object" && (
           <motion.div

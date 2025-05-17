@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
     ArrowLeft,
     LogOut,
-    UserCog,
+    ChartAreaIcon,
     ChevronRight,
     Settings,
     UserCircle2,
@@ -45,6 +45,10 @@ export default function ProfilePage() {
             description: "You have been successfully logged out.",
         });
         router.replace("/login");
+    };
+
+    const handleEmotionalSummary = () => {
+        router.push("/insight");
     };
 
     const handleUpdatePreferences = () => {
@@ -89,6 +93,17 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-2">
+                    <button
+                        onClick={handleEmotionalSummary}
+                        className="flex items-center justify-between w-full p-4 text-left bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+                    >
+                        <div className="flex items-center space-x-3">
+                            <ChartAreaIcon className="w-6 h-6" style={{ color: "#7EC8D3" }} />
+                            <span className="text-gray-700">Emotion Summary</span>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-400" />
+                    </button>
+
                     <button
                         onClick={handleUpdatePreferences}
                         className="flex items-center justify-between w-full p-4 text-left bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
