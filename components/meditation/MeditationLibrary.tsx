@@ -57,14 +57,14 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
   };
 
   return (
-    <div>
+    <div className=" dark:bg-[#111111] p-4 rounded-xl">
       <AnimatePresence>
         {active && typeof active === "object" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 h-full w-full z-10"
+            className="fixed inset-0 bg-black/80 h-full w-full z-10"
           />
         )}
       </AnimatePresence>
@@ -73,7 +73,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
           <div className="fixed inset-0 grid place-items-center z-[100]">
             <motion.div
               ref={modalRef}
-              className="relative flex flex-col mx-auto rounded-3xl overflow-hidden bg-[#11111198] shadow-[0_0_20px_rgba(0,0,0,0.2)] backdrop-blur-sm p-3 w-[280px] h-auto"
+              className="relative flex flex-col mx-auto rounded-3xl overflow-hidden bg-[#11111198] shadow-[0_0_20px_rgba(0,0,0,0.2)] backdrop-blur-sm p-6 w-[300px] h-[350px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -92,7 +92,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
               />
 
               <motion.div
-                className="flex flex-col relative"
+                className="flex flex-col relative gap-y-1"
                 layout
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -108,16 +108,23 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                   </motion.div>
                 )}
 
-                <motion.div className="flex flex-col w-full gap-y-2">
+                <motion.div className="flex flex-col w-full my-2">
                   {/* Title */}
-                  {active.title && (
-                    <motion.h3 className="text-white font-bold text-base text-center mt-1">
-                      {active.title}
-                    </motion.h3>
-                  )}
+                  <div className="mb-2">
+                    {active.title && (
+                      <motion.h3 className="text-white font-bold text-base text-center mt-1">
+                        {active.title}
+                      </motion.h3>
 
+                    )}
+                    {active.author && (
+                      <motion.p className="text-white font-normal text-xs text-center">
+                        {active.author}
+                      </motion.p>
+                    )}
+                  </div>
                   {/* Slider */}
-                  <motion.div className="flex flex-col gap-y-1">
+                  <motion.div className="flex flex-col">
                     <CustomSlider
                       value={progress}
                       onChange={handleSeek}
@@ -243,15 +250,19 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
               </motion.div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
+        )
+        }
+      </AnimatePresence >
 
-      <ul className="mx-auto w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-start gap-4">
+      <ul className=" mx-auto w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-start gap-4">
         {meditations.map((med: MeditationProp) => (
           <motion.div
             key={med._id}
             onClick={() => setActive(med)}
-            className="mb-4 flex flex-col hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-[16px] cursor-pointer"
+            whileHover={{ scale: 1.025 }}
+            onHoverStart={event => { }}
+            onHoverEnd={event => { }}
+            className="p-2 flex flex-col bg-white rounded-[16px] cursor-pointer"
           >
             <div className="flex gap-2 flex-col w-full">
               <motion.div
@@ -266,7 +277,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                   className="h-60 w-full rounded-[16px] object-cover object-top"
                 />
                 <div
-                  className="bg-black/50 w-fit absolute bottom-1 left-1 text-white text-xs font-semibold px-2 py-1 rounded-full"
+                  className="bg-black/50 w-fit absolute bottom-2 left-3 text-white text-xs font-semibold px-3 py-1 rounded-3xl"
                 >
                   <p>
                     {med.media_length >= 3600
@@ -275,18 +286,18 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                   </p>
                 </div>
               </motion.div>
-              <div className="flex justify-center flex-col">
+              <div className="flex justify-center flex-col pt-4">
                 <motion.h3
                   layoutId={`title-${med._id}`}
-                  className="text-lg font-bold text-neutral-800 dark:text-neutral-200 text-left"
+                  className="text-lg font-bold text-neutral-800 dark:text-neutral-200 text-left "
                 >
                   {med.title}
                 </motion.h3>
                 <motion.p
                   layoutId={`author-${med._id}`}
-                  className="text-xs font-normal text-neutral-600 dark:text-neutral-400 text-left"
+                  className="text-base font-normal text-neutral-600 dark:text-neutral-400 text-left "
                 >
-                  by {med.author}
+                  by <span className="text-secondary">{med.author}</span>
                 </motion.p>
 
                 {/* Truncated description with See More/See Less toggle */}
@@ -294,25 +305,25 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                   {med.description && (
                     <>
                       <motion.p className="text-sm text-neutral-700 dark:text-neutral-300 mt-1">
-                        {med.description.length > 50 ? (
+                        {med.description.length > 30 ? (
                           <>
                             {expandedDescriptions.includes(med._id)
                               ? med.description
-                              : `${med.description.substring(0, 50)}...`}
+                              : `${med.description.substring(0, 30)}...`}
                           </>
                         ) : (
                           med.description
                         )}
                       </motion.p>
-                      {med.description.length > 50 && (
+                      {med.description.length > 30 && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleDescription(med._id);
                           }}
-                          className="text-xs font-medium text-blue-600 dark:text-blue-400 mt-1 hover:underline"
+                          className="bg-primary text-xs font-medium text-white dark:text-primary mt-1 hover:underline rounded-md px-2 py-1"
                         >
-                          {expandedDescriptions.includes(med._id) ? "See Less" : "See More"}
+                          {expandedDescriptions.includes(med._id) ? "See Less" : "Read More"}
                         </button>
                       )}
                     </>
@@ -329,6 +340,6 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
       >
         <p className={`animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 ${hasMore ? 'block' : 'hidden'}`}></p>
       </div>
-    </div>
+    </div >
   );
 }

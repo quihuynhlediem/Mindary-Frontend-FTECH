@@ -23,9 +23,11 @@ export default function Meditation() {
     }
 
     return (
-        <div className="bg-white py-6 px-10 flex flex-col gap-8">
-            <h2 className=" text-3xl font-bold">Meditation library</h2>
-            <MeditationLibrary accessToken = {accessToken}/>
+        <div className=" py-6 px-10 flex flex-col gap-8">
+            <div className="p-4 bg-primary rounded-lg shadow-md">
+                <h2 className="text-white text-3xl font-bold text-center">Meditation library</h2>
+            </div>
+            <MeditationLibrary accessToken={accessToken} />
         </div>
     );
 }
