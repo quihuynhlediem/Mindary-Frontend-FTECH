@@ -1,13 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Lottie, { LottieOptions, useLottie } from "lottie-react";
+import { LottieOptions, useLottie } from "lottie-react";
 import depressEmoji from "@/public/emoji/depress.json";
 import sadEmoji from "@/public/emoji/sad.json";
 import okayEmoji from "@/public/emoji/okay.json";
 import happyEmoji from "@/public/emoji/happy.json";
 import happiestEmoji from "@/public/emoji/happiest.json";
-// import { useAtomValue } from "jotai";
-// import { diaryAtom } from "@/components/diary/DailyUserDiary";
 
 import { Diaries } from "@/app/types/diary";
 import useUserStore from "@/hooks/useUserStore";

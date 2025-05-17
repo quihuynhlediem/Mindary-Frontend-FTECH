@@ -27,9 +27,8 @@ import axios, { AxiosError } from "axios";
 import warmSmile from "@/public/warm-smile.json";
 import loudlyCrying from "@/public/loudly-crying.json";
 import Loader from "@/components/general/Loader";
-import { UUID } from "crypto";
 import { useToast } from "@/hooks/use-toast"
-import { DiaryDto, DiaryImageDto, ErrorResponse } from "@/app/types/diary";
+import { DiaryDto, ErrorResponse } from "@/app/types/diary";
 import axiosInstance from "@/apiConfig";
 import ImageUploader from "@/components/diary/ImageUploader";
 import VoiceRecorder from "@/components/diary/VoiceRecorder";
@@ -46,8 +45,8 @@ const formSchema = z.object({
 });
 
 const Input = () => {
-    const [images, setImages] = useState<File[]>([]);
-    const [audioUrl, setAudioUrl] = useState<Blob | null>(null);
+    // const [images, setImages] = useState<File[]>([]);
+    // const [audioUrl, setAudioUrl] = useState<Blob | null>(null);
     const router = useRouter();
     const { push } = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false)

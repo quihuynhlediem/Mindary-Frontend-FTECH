@@ -11,8 +11,22 @@ declare module 'axios' {
     }
 }
 
+// Define an interface for environment variables (for better type safety)
+interface EnvConfig {
+    PRODUCTION: string;
+    LOCALHOST: string;
+    PROD: string;
+}
+
+// Access environment variables with type safety
+const env: EnvConfig = {
+    PRODUCTION: process.env.PRODUCTION || '0',
+    LOCALHOST: process.env.LOCALHOST || 'http://localhost:8080',
+    PROD: process.env.PROD || 'http://mindary-alb-1862688611.ap-southeast-2.elb.amazonaws.com',
+};
+
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/api/v1",
+    baseURL: env.PRODUCTION !== '0' ? `${env.PROD}/api/v1` : `${env.LOCALHOST}/api/v1`,
 })
 
 

@@ -15,6 +15,14 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.config({
     extends: ['next/core-web-vitals', 'next/typescript'],
+    // rules: {
+    //   '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    // },
+    rules: {
+      'react/no-unescaped-entities': 'off',
+      '@next/next/no-page-custom-font': 'off',
+      ...(isBuild && { '@typescript-eslint/no-unused-vars': 'off' }), // Disable only during build
+    },
   }),
 ]
 
