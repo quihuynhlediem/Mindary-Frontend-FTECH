@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import MeditationLibrary from "@/components/meditation/MeditationLibrary";
 import useAuthStore from "@/hooks/useAuthStore";
 import { useRouter } from "next/navigation";
+import Header from "@/components/general/Header";
 
 export default function Meditation() {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -23,11 +24,15 @@ export default function Meditation() {
     }
 
     return (
-        <div className=" py-6 px-10 flex flex-col gap-8">
-            <div className="p-4 bg-primary rounded-lg shadow-md">
+        <>
+            <Header page={"Meditation"} />
+            <div className="flex flex-col gap-8">
+                {/* <div className="p-4 bg-primary rounded-lg shadow-md">
                 <h2 className="text-white text-3xl font-bold text-center">Meditation library</h2>
+            </div> */}
+
+                <MeditationLibrary accessToken={accessToken} />
             </div>
-            <MeditationLibrary accessToken={accessToken} />
-        </div>
+        </>
     );
 }
