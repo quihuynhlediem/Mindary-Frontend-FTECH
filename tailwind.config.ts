@@ -10,8 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#F9FAFB",
+        foreground: "#F5F5F5",
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
@@ -21,12 +21,12 @@ const config: Config = {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#7ec8d3",
           foreground: "hsl(var(--primary-foreground))",
           hover: "hsl(var(--primary-hover))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#00a5e3",
           foreground: "hsl(var(--secondary-foreground))",
         },
         muted: {
@@ -69,10 +69,6 @@ const config: Config = {
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
-      },
-      fontFamily: {
-        sans: ['Urbanist', ...require('tailwindcss/defaultTheme').fontFamily.sans],
-        urbanist: ['Urbanist', ...require('tailwindcss/defaultTheme').fontFamily.sans],
       }
     },
   },

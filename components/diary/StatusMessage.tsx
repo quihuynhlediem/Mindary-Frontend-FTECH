@@ -1,50 +1,40 @@
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { useAtomValue } from "jotai";
-// import { diaryAtom } from "./DailyUserDiary";
+"use client";
 
-// enum Mood {
-//     Down = 1,
-//     Okay,
-//     Good,
-//     Happy,
-//     Fantastic,
-// }
+// Define the shape of the result prop
+interface EmotionObject {
+  emotionCategory: string[];
+}
 
-// const StatusMessage = () => {
-//     const [moodRating, setMoodRating] = useState<Mood | null>(null);
-//     const diary = useAtomValue(diaryAtom)!;
-//     // const [loading, setLoading] = useState<boolean>(true);
+interface StatusMessageProps {
+  result: {
+    emotionObjects: EmotionObject[];
+  } | null; // Allow null for error cases
+}
 
-//     useEffect(() => {
-//         const fetchMoodRating = async () => {
-//             try {
-//                 const response = await axios.get("/api/moodObjects/emotionLevel"); // nay la api endpoint
-//                 const moodLevel = response.data.moodLevel;
-//                 setMoodRating(moodLevel);
-//             } catch (error) {
-//                 console.error("Error fetching mood rating:", error);
-//             }
-//         };
+const StatusMessage: React.FC<StatusMessageProps> = ({ result }) => {
 
-//         fetchMoodRating();
-//     }, []);
+  // Handle cases where result or emotionObjects is missing or invalid
+  if (!result || !result.emotionObjects || result.emotionObjects.length === 0) {
+    return (
+      <div className="text-center text-2xl font-bold pb-3">
+        <h2 className="text-headline-1">No mood data available</h2>
+      </div>
+    );
+  }
 
-//     // if (loading) {
-//     //     return <div>Loading...</div>;
-//     // }
+  // Safely access emotionCategory and provide a fallback
+  const emotionCategory = result.emotionObjects[0]?.emotionCategory || [];
+  const moodDescriptions = Array.isArray(emotionCategory) && emotionCategory.length > 0
+    ? emotionCategory.join(", ").toLowerCase()
+    : "unknown";
 
-//     const moodDescriptions = diary.data[0].moodObjects[0].category
-//         .join(", ")
-//         .toLowerCase();
+  const description = `Today you feel ${moodDescriptions}`;
 
-//     const description = `Today you feel ${moodDescriptions}`;
-//     return (
-//         <div className="text-center text-2xl font-bold pb-3">
-//             <h2 className="text-headline-1">{description}</h2>
-//         </div>
-//     );
-// };
+  return (
+    <div className="text-center text-2xl font-bold pb-3">
+      <h2 className="text-headline-1">{description}</h2>
+    </div>
+  );
+};
 
-// export default StatusMessage;
+export default StatusMessage;

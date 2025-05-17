@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation';
 import Calendar from '@/components/diary/Calendar';
-import DailyUserContent from '@/components/diary/DailyUserDiary';
+import DailyUserContent from '@/components/diary/DailyUserContent';
 import useAuthStore from '@/hooks/useAuthStore';
 import useUserStore from '@/hooks/useUserStore';
 import axiosInstance from '@/apiConfig';
@@ -96,7 +96,7 @@ const Diary = () => {
     };
 
     return (
-        <div className='relative min-h-full max-w-screen w-screen h-screen px-4 py-14 bg-primary-foreground space-y-6'>
+        <div className='relative min-h-full max-w-screen w-screen h-screen px-4 py-14 bg-background space-y-6'>
             <Calendar />
             {isContentLoading ? (
                 <div className="flex justify-center items-center my-48">

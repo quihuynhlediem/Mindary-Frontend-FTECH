@@ -7,7 +7,7 @@ interface Props {
 const Excerpt: FC<Props> = ({ text }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const isLongEnough = text.length >= 100;
+    const isLongEnough = text.length >= 200;
 
     let briefText;
     if (isLongEnough) {
