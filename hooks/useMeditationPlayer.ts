@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { MeditationProp } from "@/app/types/meditation";
 import Hls from "hls.js";
+import { MeditationDto } from "@/components/diary/Tips";
 
-export function useMeditationPlayer(active: MeditationProp | null | boolean) {
+export function useMeditationPlayer(active: MeditationProp | null | boolean | MeditationDto) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);

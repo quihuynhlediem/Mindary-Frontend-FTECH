@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { MeditationProp } from "@/app/types/meditation";
 import { useOutsideClick } from "@/hooks/use-outside-click";
+import { MeditationDto } from "@/components/diary/Tips";
 
 export function useActiveMeditation() {
-  const [active, setActive] = useState<MeditationProp | boolean | null>(null);
+  const [active, setActive] = useState<MeditationProp | boolean | null | MeditationDto>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Handle Escape key press

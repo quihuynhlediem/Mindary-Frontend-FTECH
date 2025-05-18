@@ -1,11 +1,19 @@
 "use client"
+
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation';
 import Header from '@/components/general/Header';
 import DataBlock from '@/components/insight/DataBlock';
 import MoodChart from '@/components/insight/MoodChart';
 import useAuthStore from '@/hooks/useAuthStore';
-import ApexRadialChart from '@/components/insight/ApexRadialChart';
+// import ApexRadialChart from '@/components/insight/ApexRadialChart';
+
+import dynamic from 'next/dynamic';
+
+// Dynamically import ApexRadialChart with SSR disabled
+const ApexRadialChart = dynamic(() => import('@/components/insight/ApexRadialChart'), {
+  ssr: false, // Disable server-side rendering for this component
+});
 
 const Insight = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -17,8 +25,9 @@ const Insight = () => {
       router.push('/login')
     }
   }, [isAuthenticated, router])
+
+  // Prevent rendering while redirecting
   {
-    // Prevent rendering while redirecting
     if (!isAuthenticated) {
       return null
     }
@@ -30,7 +39,7 @@ const Insight = () => {
     }
 
     return (
-      <div className='relative min-h-full max-w-screen min-w-screen min-h-screen py-14 bg-primary space-y-6'>
+      <div className='relative max-w-screen min-w-screen min-h-screen py-14 bg-primary space-y-6'>
         <Header page="Insights" />
         <div className='px-4 flex gap-2'>
           <DataBlock emoji={emojiDict['streak']} data={65} field='Longest streak' />
