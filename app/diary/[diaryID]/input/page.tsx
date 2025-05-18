@@ -220,13 +220,13 @@ const Input = () => {
                             />
                         </div>
                         <DialogTitle className="flex justify-center gap-1 text-center">
-                            Analyzing
+                            Saving
                             <div className="relative top-2">
                                 <Loader />
                             </div>
                         </DialogTitle>
                         <DialogDescription className="text-center">
-                            Please wait for a bit while we are trying to analyzing through
+                            Please wait for a bit while we are trying to saving through
                             your diary, it won't be long we promise 😉
                         </DialogDescription>
                     </DialogHeader>
