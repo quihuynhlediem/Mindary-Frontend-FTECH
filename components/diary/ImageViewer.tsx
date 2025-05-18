@@ -31,14 +31,14 @@ const ImageViewer: React.FC<ImageViews> = ({ diaryImages }) => {
     };
 
     return (
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 ">
             <Label className="text-[25px] font-semibold">Photo</Label>
-            <Carousel className="flex flex-wrap gap-2 w-full px-10 left-0">
+            <Carousel className="flex flex-wrap gap-2 w-full px-10 left-2">
                 <CarouselContent>
                     {diaryImages.map((image, index) => (
                         <CarouselItem
                             key={index}
-                            className="relative w-32 h-32 cursor-pointer"
+                            className="relative h-32 w-32 cursor-pointer"
                             onClick={() => setSelectedImage(image.url)}
                         >
                             <Image
@@ -64,7 +64,7 @@ const ImageViewer: React.FC<ImageViews> = ({ diaryImages }) => {
                         <Image
                             src={selectedImage}
                             alt="Selected Image"
-                            className="object-contain w-full h-full"
+                            className="left-2 object-contain w-full h-full"
                             fill={true}
                             loader={myLoader}
                         />
