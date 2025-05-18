@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation';
 import Calendar from '@/components/diary/Calendar';
+import Header from '@/components/general/Header';
 import DailyUserContent from '@/components/diary/DailyUserContent';
 import useAuthStore from '@/hooks/useAuthStore';
 import useUserStore from '@/hooks/useUserStore';
@@ -148,21 +149,23 @@ const Diary = () => {
     };
 
     return (
-        <div className='relative min-h-screen max-w-screen w-screen px-4 py-14 bg-background space-y-6'>
-            <Calendar />
-            {isContentLoading ? (
-                <div className="flex justify-center items-center my-48">
-                    <Loader />
-                </div>
-            ) : showAnalysis ? (
-                <div className="flex flex-col space-y-4">
-                    {/* DIARY ANALYSIS HERE */}
-                    {/* <DiaryAnalysis diaryId={currentDiaryId} /> */}
-                    <DailyUserContent buttonOnClick={() => setShowAnalysis(false)} />
-                </div>
-            ) : diaryExists ? (
-                <>
-                    {/* <div className="flex justify-end items-center">
+        <>
+            <Header page="My Journals" />
+            <div className='relative min-h-screen max-w-screen w-screen px-4 pt-4 pb-10 bg-background space-y-6'>
+                <Calendar />
+                {isContentLoading ? (
+                    <div className="flex justify-center items-center my-48">
+                        <Loader />
+                    </div>
+                ) : showAnalysis ? (
+                    <div className="flex flex-col space-y-4">
+                        {/* DIARY ANALYSIS HERE */}
+                        {/* <DiaryAnalysis diaryId={currentDiaryId} /> */}
+                        <DailyUserContent buttonOnClick={() => setShowAnalysis(false)} />
+                    </div>
+                ) : diaryExists ? (
+                    <>
+                        {/* <div className="flex justify-end items-center">
                         <button onClick={handleAnalysisButtonClick} disabled={isAnalysisLoading} className="flex justify-center items-center gap-1.5 bg-[#E6F4F1] border-[#7EC8D3] rounded-lg border-2 border-solid p-1 cursor-pointer">
                             <ChartArea className="w-4" /> <span className="text-center justify-start text-black text-sm font-semibold tracking-wide">                        {isAnalysisLoading ? (
                                 <MoonLoader />
@@ -173,13 +176,13 @@ const Diary = () => {
                             )}</span>
                         </button>
                     </div> */}
-                    <DailyUserDiary handleAnalysisButtonClick={handleAnalysisButtonClick} isAnalysisLoading={isAnalysisLoading} />
-                    {errorMessage && (
-                        <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-                            {errorMessage}
-                        </div>
-                    )}
-                    {/* <Button
+                        <DailyUserDiary handleAnalysisButtonClick={handleAnalysisButtonClick} isAnalysisLoading={isAnalysisLoading} />
+                        {errorMessage && (
+                            <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+                                {errorMessage}
+                            </div>
+                        )}
+                        {/* <Button
                         onClick={handleAnalysisButtonClick}
                         disabled={isAnalysisLoading}
                         className="bg-primary-hover text-white p-2 rounded hover:bg-primary"
@@ -192,11 +195,12 @@ const Diary = () => {
                             'Analyze Diary'
                         )}
                     </Button> */}
-                </>
-            ) : (
-                <EmptyDiary />
-            )}
-        </div>
+                    </>
+                ) : (
+                    <EmptyDiary />
+                )}
+            </div>
+        </>
     );
 }
 

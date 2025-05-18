@@ -12,7 +12,7 @@ const DoYouRemember: React.FC<DoYouRememberProps> = ({
   description,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center mt-8 bg-white rounded-[32px] overflow-hidden shadow-lg w-[90%] max-w-[400px] p-4">
+    <div className="flex flex-col items-center justify-center bg-white rounded-[32px] overflow-hidden shadow-lg w-[90%] max-w-[400px] p-4">
       <div className="text-[#7ec8d3] font-semibold text-lg text-center">
         {title}
       </div>
@@ -49,8 +49,8 @@ export default function HomePage() {
   const { push } = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full">
-      <div className="w-full px-4 flex items-center justify-between">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full p-10 sm:p-20">
+      <div className="w-full flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mt-4">Welcome Back!</h1>
           <h2 className="text-xl text-[#69a8b2] font-bold">MY BELOVED USER</h2>
@@ -90,10 +90,10 @@ export default function HomePage() {
         <Card title="Add Functions" iconSrc="/addFunction.svg" />
       </div>
 
-      <DoYouRemember
+      {/* <DoYouRemember
         title="Do you remember..."
         description="A year ago, you became the youngest Head of Technology Department of FinTech Club. Great job girl!"
-      />
+      /> */}
     </div>
   );
 }

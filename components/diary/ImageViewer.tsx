@@ -32,7 +32,7 @@ const ImageViewer: React.FC<ImageViews> = ({ diaryImages }) => {
 
     return (
         <div className="flex flex-col space-y-4 ">
-            <Label className="text-[25px] font-semibold">Photo</Label>
+            {/* <Label className="text-[25px] font-semibold">Photo</Label> */}
             <Carousel className="flex flex-wrap gap-2 w-full px-10 left-2">
                 <CarouselContent>
                     {diaryImages.map((image, index) => (
