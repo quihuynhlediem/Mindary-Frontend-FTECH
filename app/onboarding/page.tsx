@@ -73,7 +73,7 @@ const Onboarding = () => {
     }
 
     return (
-        <div className="relative w-[430px] h-[932px] overflow-hidden bg-white">
+        <div className="relative min-w-screen min-h-screen overflow-hidden bg-white">
             <div className="absolute w-[1000px] h-[1000px] bg-primary-hover rounded-full -top-[500px] -left-[285px]" />
 
             {/* Main carousel content */}

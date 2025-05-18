@@ -1,8 +1,8 @@
-import axios, { Axios, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { AuthResponse } from "./app/types/diary";
-import { headers } from "next/headers";
-import useAuthStore from "./hooks/useAuthStore";
 import Cookies from "js-cookie";
+import useAuthStore from "./hooks/useAuthStore";
+import useUserStore from "./hooks/useUserStore";
 
 // Module augmentation for InternalAxiosRequestConfig
 declare module 'axios' {
@@ -25,86 +25,71 @@ const env: EnvConfig = {
     PROD: process.env.NEXT_PUBLIC_PROD || 'http://mindary-alb-1862688611.ap-southeast-2.elb.amazonaws.com',
 };
 
-const axiosInstance = axios.create({
-    baseURL: env.PRODUCTION !== '0' ? `${env.PROD}/api/v1` : `${env.LOCALHOST}/api/v1`,
-})
-
 // Log to verify environment variables
 console.log("Environment Variables:", env);
 
+// Create Axios instance with proxy base URL
+const axiosInstance = axios.create({
+    baseURL: '/api/proxy', // Proxy route handles dynamic backend URL
+});
+
+// Refresh access token function
 const refreshAccessToken = async (refreshToken: string) => {
     const setAuth = useAuthStore((state: any) => state.setAuthTokens);
     const clearAuthTokens = useAuthStore((state) => state.clearAuthTokens);
 
     if (!refreshToken) {
-        window.location.href = "/login"
-        return null
+        window.location.href = "/login";
+        return null;
     }
 
     try {
-        const res = await axios.post<AuthResponse>("http://localhost:8080/api/v1/auth/refresh-token",
-            {}, // No body needed
-            {
-                headers: {
-                    "Authorization": `Bearer ${refreshToken}`,
-                }
-            })
+        const res = await axiosInstance.post<AuthResponse>('/auth/refresh-token', {}, {
+            headers: {
+                "Authorization": `Bearer ${refreshToken}`,
+            },
+        });
 
-        if (res.status != 200) {
+        if (res.status !== 200) {
             clearAuthTokens();
-            window.location.href = "/login"
+            window.location.href = "/login";
             return null;
         }
 
         setAuth(res.data.userId, res.data.accessToken, res.data.refreshToken, res.data.salt);
-
-        return res.data.refreshToken
+        return res.data.accessToken; // Return the new access token for the interceptor
     } catch (error) {
         clearAuthTokens();
-        window.location.href = "/login"
+        window.location.href = "/login";
         return null;
     }
-}
+};
 
+// Add interceptor for token refresh
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-        const originalRequest = error.config
+        const originalRequest = error.config;
 
-        if (error.response?.status === 401 && originalRequest && !originalRequest?._retry) {
-            const refreshToken: string = Cookies.get("refreshToken") as string;
-            // const refreshToken: string = useAtomValue(refreshTokenAtom) as string;
-            originalRequest._retry = true
+        if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+            const refreshToken = Cookies.get("refreshToken") as string;
+            originalRequest._retry = true;
 
             try {
                 const newAccessToken = await refreshAccessToken(refreshToken);
                 if (newAccessToken && originalRequest) {
-                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-                    originalRequest._retry = false
-                    return axiosInstance(originalRequest)
+                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                    originalRequest._retry = false;
+                    return axiosInstance(originalRequest);
                 }
             } catch (refreshError) {
                 console.error('Token refresh failed:', refreshError);
-                // localStorage.clear()
-                // window.location.href = '/login';
                 return Promise.reject(refreshError);
             }
-
-            // console.log("unauthorized")
-            // // try {
-            // const newAccessToken = await refreshAccessToken();
-
-            // if (newAccessToken && originalRequest) {
-            //     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-            //     originalRequest._retry = false
-            //     return axiosInstance(originalRequest)
-            // } else {
-            //     return Promise.reject(error)
-            // }
         }
 
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
-)
+);
 
-export default axiosInstance
+export default axiosInstance;
