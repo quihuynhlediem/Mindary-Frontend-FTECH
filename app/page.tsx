@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import useAuthStore from "@/hooks/useAuthStore";
 
 export default function Home() {
-  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isFirstTime = useAuthStore((state) => state.isFirstTimeLogin());
@@ -35,9 +34,9 @@ export default function Home() {
           }
 
           // Authenticated returning user - fetch CSRF and show homepage
-          const response = await api.get('/api/v1/csrf');
-          console.log("CSRF Token:", response.data.csrfToken);
-          setCsrfToken(response.data.csrfToken);
+          // const response = await api.get('/api/v1/csrf');
+          // console.log("CSRF Token:", response.data.csrfToken);
+          // setCsrfToken(response.data.csrfToken);
           setIsLoading(false);
         } catch (error) {
           console.error("Error in navigation:", error);

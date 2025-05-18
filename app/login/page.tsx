@@ -50,7 +50,7 @@ const page = () => {
         try {
             const response = await axiosInstance.post("/auth/login", {
                 email: values.email,
-                password: values.password
+                password: values.password,
             })
 
             // Store authentication tokens

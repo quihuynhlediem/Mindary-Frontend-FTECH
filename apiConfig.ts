@@ -2,7 +2,6 @@ import axios, { AxiosError } from "axios";
 import { AuthResponse } from "./app/types/diary";
 import Cookies from "js-cookie";
 import useAuthStore from "./hooks/useAuthStore";
-import useUserStore from "./hooks/useUserStore";
 
 // Module augmentation for InternalAxiosRequestConfig
 declare module 'axios' {
@@ -28,9 +27,12 @@ const env: EnvConfig = {
 // Log to verify environment variables
 console.log("Environment Variables:", env);
 
-// Create Axios instance with proxy base URL
+// Create Axios instance with direct backend URL
 const axiosInstance = axios.create({
-    baseURL: '/api/proxy', // Proxy route handles dynamic backend URL
+    baseURL: env.PRODUCTION !== '0' ? `${env.PROD}/api/v1` : `${env.LOCALHOST}/api/v1`,
+    headers: {
+        'Referrer-Policy': 'unsafe-url',
+    }
 });
 
 // Refresh access token function
