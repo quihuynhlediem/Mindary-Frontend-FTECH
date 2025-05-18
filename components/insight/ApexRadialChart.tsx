@@ -77,7 +77,7 @@ export default function ApexRadialChart() {
                             fontWeight: 400,
                             color: undefined,
                             offsetY: 2,
-                            formatter: function (val) {
+                            formatter: function (val: number) {
                                 // return (val / 100 * 5).toString() + `${(val / 100 * 5) > 1 ? " times" : " time"}`;
                                 return (val / 100 * 5).toString();
                             }
@@ -87,8 +87,8 @@ export default function ApexRadialChart() {
                             label: 'Diaries',
                             fontSize: '18px',
                             fontWeight: 600,
-                            formatter: function (w) {
-                                const total = w.globals.seriesTotals.reduce((a, b) => a + (b / 100 * 5), 0);
+                            formatter: function (w: any) {
+                                const total = w.globals.seriesTotals.reduce((a: number, b: number) => a + (b / 100 * 5), 0);
                                 return `${total}`;
                             },
                         }
@@ -98,7 +98,7 @@ export default function ApexRadialChart() {
                         useSeriesColors: true,
                         offsetX: -20, // Adjust this to make space for icons
                         fontSize: '16px',
-                        formatter: function (seriesName, opts) {
+                        formatter: function (seriesName: string, opts: any) {
                             // Get the emotion level value and format it to one decimal place
                             const emotionLevel = (opts.w.globals.series[opts.seriesIndex] / 100 * 5);
 
@@ -208,7 +208,7 @@ export default function ApexRadialChart() {
                                         fontSize: '11px',
                                         fontWeight: 400,
                                         offsetY: 2,
-                                        formatter: function (val) {
+                                        formatter: function (val: number) {
                                             return (val / 100 * 5).toString()
                                         }
                                     },
@@ -221,7 +221,7 @@ export default function ApexRadialChart() {
                                     useSeriesColors: true,
                                     offsetX: -5,
                                     fontSize: '11px',
-                                    formatter: function (seriesName, opts) {
+                                    formatter: function (seriesName: string, opts: any) {
                                         // Shorter labels for small screens
                                         const val = (opts.w.globals.series[opts.seriesIndex] / 100 * 5);
                                         return `${seriesName} (${val})`;

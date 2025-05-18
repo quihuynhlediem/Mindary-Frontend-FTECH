@@ -75,11 +75,11 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm h-full w-full"
+              className="fixed inset-0 bg-white/70 backdrop-blur-sm h-full w-full"
             />
             <motion.div
               ref={modalRef}
-              className="relative flex flex-col mx-auto rounded-3xl overflow-hidden bg-gradient-to-br from-neutral-900/95 to-neutral-800/95 shadow-2xl backdrop-blur-md p-6 w-[340px] max-w-[95vw] h-auto"
+              className="relative flex flex-col mx-auto rounded-3xl overflow-hidden bg-white shadow-xl p-6 w-[340px] max-w-[95vw] h-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
@@ -100,7 +100,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                 {/* Cover Image with Gradient Overlay */}
                 {active.picture_url && (
                   <motion.div className="overflow-hidden rounded-2xl h-[200px] w-full relative">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 z-10"></div>
                     <img
                       src={active.picture_url}
                       alt={active.title || "Meditation cover"}
@@ -113,12 +113,12 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                   {/* Title & Author */}
                   <div className="mb-4">
                     {active.title && (
-                      <motion.h3 className="text-white font-bold text-xl">
+                      <motion.h3 className="text-neutral-900 font-bold text-xl">
                         {active.title}
                       </motion.h3>
                     )}
                     {active.author && (
-                      <motion.p className="text-neutral-300 font-normal text-sm mt-1">
+                      <motion.p className="text-neutral-600 font-normal text-sm mt-1">
                         by {active.author}
                       </motion.p>
                     )}
@@ -132,10 +132,10 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                       className="w-full"
                     />
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-neutral-300 text-xs font-medium">
+                      <span className="text-neutral-600 text-xs font-medium">
                         {formatTime(currentTime)}
                       </span>
-                      <span className="text-neutral-300 text-xs font-medium">
+                      <span className="text-neutral-600 text-xs font-medium">
                         {formatTime(active.media_length)}
                       </span>
                     </div>
@@ -154,8 +154,8 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                             handleShuffle();
                           }}
                           className={cn(
-                            "text-neutral-300 hover:bg-neutral-700 hover:text-white h-10 w-10 rounded-full transition-colors",
-                            isShuffle && "bg-neutral-700 text-white"
+                            "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800 h-10 w-10 rounded-full transition-colors",
+                            isShuffle && "bg-neutral-100 text-neutral-800"
                           )}
                         >
                           <Shuffle className="h-5 w-5" />
@@ -170,7 +170,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                             variant="ghost"
                             size="icon"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-white hover:bg-neutral-700 hover:text-white h-10 w-10 rounded-full"
+                            className="text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 h-10 w-10 rounded-full"
                           >
                             <SkipBack className="h-5 w-5" />
                           </Button>
@@ -185,7 +185,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                             }}
                             variant="default"
                             size="icon"
-                            className="bg-primary hover:bg-primary/90 text-white h-14 w-14 rounded-full flex items-center justify-center"
+                            className="bg-primary hover:bg-primary/90 text-white h-14 w-14 rounded-full flex items-center justify-center shadow-md"
                           >
                             {isPlaying ? (
                               <Pause className="h-7 w-7" />
@@ -201,7 +201,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                             variant="ghost"
                             size="icon"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-white hover:bg-neutral-700 hover:text-white h-10 w-10 rounded-full"
+                            className="text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 h-10 w-10 rounded-full"
                           >
                             <SkipForward className="h-5 w-5" />
                           </Button>
@@ -218,8 +218,8 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                             handleRepeat();
                           }}
                           className={cn(
-                            "text-neutral-300 hover:bg-neutral-700 hover:text-white h-10 w-10 rounded-full transition-colors",
-                            isRepeat && "bg-neutral-700 text-white"
+                            "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800 h-10 w-10 rounded-full transition-colors",
+                            isRepeat && "bg-neutral-100 text-neutral-800"
                           )}
                         >
                           <Repeat className="h-5 w-5" />
@@ -228,12 +228,12 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                     </div>
                   </motion.div>
 
-                  {/* Description Toggle (Optional) */}
+                  {/* Description Toggle (Optional) - Uncomment if needed */}
                   {/* {active.description && (
-                    <motion.div className="mt-2 border-t border-neutral-700 pt-3">
+                    <motion.div className="mt-2 border-t border-neutral-200 pt-3">
                       <Button
                         variant="ghost"
-                        className="text-sm text-neutral-300 w-full justify-start hover:bg-[#7EC8D3]/20 hover:text-[#7EC8D3] p-2 rounded-lg transition-colors"
+                        className="text-sm text-neutral-700 w-full justify-start hover:bg-[#7EC8D3]/10 hover:text-[#7EC8D3] p-2 rounded-lg transition-colors"
                         onClick={() => toggleDescription(active._id)}
                       >
                         <div className="flex items-center gap-2">
@@ -255,7 +255,7 @@ export default function MeditationLibrary(accessToken: { accessToken: string | n
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
-                          className="mt-2 text-sm text-neutral-300 leading-relaxed px-3 py-2 bg-[#7EC8D3]/10 rounded-lg"
+                          className="mt-2 text-sm text-neutral-700 leading-relaxed px-3 py-2 bg-[#7EC8D3]/5 rounded-lg"
                         >
                           {active.description}
                         </motion.div>
