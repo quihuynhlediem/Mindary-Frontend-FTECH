@@ -14,9 +14,11 @@ import axiosInstance from "@/apiConfig";
 import useAuthStore from "@/hooks/useAuthStore";
 import useUserStore from "@/hooks/useUserStore";
 import ImageViewer from "./ImageViewer";
+import { Lock, Calendar, Edit, ImageIcon } from "lucide-react";
+import { ChartArea } from 'lucide-react';
 
 const passwordSchema = z.object({
-    password: z.string().min(8).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/, {
+    password: z.string().min(8).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/, {
         message: "Password must be 8+ characters with uppercase, lowercase, number, and special character"
     })
 });
@@ -27,7 +29,7 @@ interface PasswordFormData {
     password: string;
 }
 
-// Password Modal Component
+// Password Modal Component with refined styling
 const PasswordModal: React.FC<{
     isOpen: boolean;
     onSubmit: (password: string) => void;
@@ -47,34 +49,38 @@ const PasswordModal: React.FC<{
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-                <h2 className="text-xl font-semibold mb-4">Enter Your Password</h2>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg shadow-2xl max-w-sm w-full border border-neutral-200">
+                <div className="flex items-center gap-2 mb-6">
+                    <Lock className="w-5 h-5 text-[#7EC8D3]" />
+                    <h2 className="text-2xl font-serif font-semibold">Diary Locked</h2>
+                </div>
+                <p className="text-neutral-600 mb-4">Enter your password to unlock your private diary entries.</p>
                 <form onSubmit={handleSubmit(onFormSubmit)}>
                     <div className="mb-4">
                         <input
                             type="password"
                             {...register("password")}
-                            placeholder="Password"
-                            className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                            placeholder="Enter your password"
+                            className="border border-neutral-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-[#7EC8D3] bg-neutral-50"
                         />
                         {errors.password && (
-                            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                            <p className="text-red-500 text-sm mt-2">{errors.password.message}</p>
                         )}
                     </div>
-                    <div className="flex justify-end space-x-2">
+                    <div className="flex justify-end gap-3">
                         <Button
                             type="button"
                             onClick={onClose}
-                            className="bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400"
+                            className="bg-white border border-neutral-300 text-neutral-600 p-2 rounded-lg hover:bg-neutral-100"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-primary-hover text-white p-2 rounded hover:bg-primary-hover"
+                            className="bg-[#7EC8D3] text-white p-2 rounded-lg hover:bg-[#7EC8D3]/90"
                         >
-                            Submit
+                            Unlock Diary
                         </Button>
                     </div>
                 </form>
@@ -83,7 +89,10 @@ const PasswordModal: React.FC<{
     );
 };
 
-const DailyUserContent = () => {
+const DailyUserContent: React.FC<{
+    handleAnalysisButtonClick: () => void;
+    isAnalysisLoading: boolean,
+}> = ({ handleAnalysisButtonClick, isAnalysisLoading }) => {
     const chosenDate = useUserStore((state) => state.selectedDate);
     const addDiary = useUserStore((state) => state.addDiary);
     const addImage = useUserStore((state) => state.addImages);
@@ -106,12 +115,6 @@ const DailyUserContent = () => {
             setIsPasswordModalOpen(true);
         }
     }, [decryptKey, chosenDate]);
-
-    // Handle password submission
-    // const handlePasswordSubmit = async (password: string) => {
-    //     setPassword(password.trim());
-    //     setIsPasswordModalOpen(false);
-    // };
 
     // Decrypt private key using password
     const decryptPrivateKey = useCallback(
@@ -282,22 +285,27 @@ const DailyUserContent = () => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center my-48">
-                <Loader />
+            <div className="flex justify-center items-center my-20">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="relative w-12 h-12">
+                        <div className="absolute inset-0 rounded-full border-4 border-t-[#7EC8D3] border-neutral-200 animate-spin"></div>
+                    </div>
+                    <p className="text-neutral-500">Opening your diary...</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="p-2 flex flex-col">
+        <div className="p-4 flex flex-col items-center">
             {errorMessage && (
-                <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-                    {errorMessage}
+                <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 text-center border border-red-200 max-w-md mx-auto">
+                    <p className="mb-2">{errorMessage}</p>
                     <Button
                         onClick={() => { setPassword(null); setIsPasswordModalOpen(true); }}
-                        className="text-white ml-2 bg-primary hover:bg-primary-hover text-center"
+                        className="text-white bg-[#7EC8D3] hover:bg-[#7EC8D3]/90 rounded-lg"
                     >
-                        Retry Password
+                        Try Again
                     </Button>
                 </div>
             )}
@@ -306,20 +314,65 @@ const DailyUserContent = () => {
                 onSubmit={handlePasswordSubmit}
                 onClose={() => setIsPasswordModalOpen(false)}
             />
-            {diaries[chosenDate!] && (
-                <div className="p-4 rounded-lg bg-white flex flex-col space-y-6">
-                    <div className="break-words">{diaries[chosenDate!]}</div>
-                    {diaryImages[chosenDate!] ? (
-                        <ImageViewer diaryImages={diaryImages[chosenDate!]} />
-                    ) : (
-                        <div></div>
-                    )}
-                    {/* Uncomment when ready to include these components */}
-                    {/* <AnimatedEmoji />
-                    <StatusMessage />   
-                    <PersonalizedMessage />
-                    <ReasonSection />
-                    <Tips /> */}
+
+            {/* Diary Book Container */}
+            {diaries[chosenDate!] ? (
+                <div className="w-full max-w-3xl mx-auto">
+                    {/* Date Header */}
+                    <div className="mb-4 flex items-center justify-between">
+                        <div className="w-full flex items-center justify-between gap-2">
+
+                            <div className="text-xs px-2 py-1 bg-[#7EC8D3]/10 text-[#7EC8D3] rounded-full font-medium">
+                                {diaryImages[chosenDate!]?.length ? (
+                                    <div className="flex items-center gap-1">
+                                        <ImageIcon className="w-3 h-3" />
+                                        <span>{diaryImages[chosenDate!].length} images</span>
+                                    </div>
+                                ) : "Text entry"}
+                            </div>
+                            <button onClick={handleAnalysisButtonClick} disabled={isAnalysisLoading} className="flex justify-center items-center gap-1.5 bg-[#E6F4F1] border-[#7EC8D3] rounded-lg border-2 border-solid p-1 cursor-pointer">
+                                <ChartArea className="w-4" /> <span className="text-center justify-start text-black text-sm font-semibold tracking-wide">View Analysis</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Diary Paper Effect */}
+                    <div className="bg-white rounded-lg border border-neutral-200 shadow-md overflow-hidden">
+                        {/* Notebook Header Bar */}
+                        <div className="h-4 bg-gradient-to-r from-[#7EC8D3]/80 to-[#7EC8D3]"></div>
+
+                        {/* Diary Content */}
+                        <div className="diary-content p-8 relative bg-[url('/paper-texture.png')] bg-repeat">
+                            {/* Decorative paperclip */}
+                            <div className="absolute -right-2 -top-1 w-8 h-16 bg-[url('/paperclip.png')] bg-contain bg-no-repeat rotate-6 opacity-30 pointer-events-none"></div>
+
+                            {/* Diary text with improved typography */}
+                            <div className="prose prose-neutral max-w-none font-serif whitespace-pre-wrap leading-relaxed">
+                                {diaries[chosenDate!]?.split('\n').map((paragraph, idx) => (
+                                    paragraph ? <p key={idx} className="mb-4">{paragraph}</p> : <br key={idx} />
+                                ))}
+                            </div>
+
+                            {/* Images with diary styling */}
+                            {diaryImages[chosenDate!] && diaryImages[chosenDate!].length > 0 && (
+                                <div className="mt-6 pt-6 border-t border-neutral-200">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <ImageIcon className="w-4 h-4 text-neutral-500" />
+                                        <h3 className="font-serif text-lg text-neutral-700">Photos</h3>
+                                    </div>
+                                    <div className="diary-photos">
+                                        <ImageViewer
+                                            diaryImages={diaryImages[chosenDate!]}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="w-full max-w-3xl mx-auto bg-white rounded-lg border border-neutral-200 shadow-md p-8 flex flex-col items-center justify-center min-h-[300px]">
+                    <EmptyDiary />
                 </div>
             )}
         </div>

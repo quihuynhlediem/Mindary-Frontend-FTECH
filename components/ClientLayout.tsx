@@ -16,7 +16,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
     return (
         <>
-            <main className={shouldHavePadding ? "pb-20" : ""}>
+            <main className={shouldHavePadding ? "pb-16" : ""}>
                 {children}
             </main>
             <BottomNav />

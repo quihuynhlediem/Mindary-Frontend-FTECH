@@ -14,6 +14,7 @@ import Loader from '@/components/general/Loader';
 import MoonLoader from 'react-spinners/MoonLoader';
 import { toast } from '@/hooks/use-toast';
 import DailyUserDiary from '@/components/diary/DailyUserDiary';
+import { ChartArea } from 'lucide-react';
 
 const Diary = () => {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -157,23 +158,28 @@ const Diary = () => {
                 <div className="flex flex-col space-y-4">
                     {/* DIARY ANALYSIS HERE */}
                     {/* <DiaryAnalysis diaryId={currentDiaryId} /> */}
-                    <DailyUserContent />
-                    <Button
-                        onClick={() => setShowAnalysis(false)}
-                        className="bg-primary-hover text-white p-2 rounded hover:bg-primary self-start"
-                    >
-                        Back to Diary
-                    </Button>
+                    <DailyUserContent buttonOnClick={() => setShowAnalysis(false)} />
                 </div>
             ) : diaryExists ? (
                 <>
-                    <DailyUserDiary />
+                    {/* <div className="flex justify-end items-center">
+                        <button onClick={handleAnalysisButtonClick} disabled={isAnalysisLoading} className="flex justify-center items-center gap-1.5 bg-[#E6F4F1] border-[#7EC8D3] rounded-lg border-2 border-solid p-1 cursor-pointer">
+                            <ChartArea className="w-4" /> <span className="text-center justify-start text-black text-sm font-semibold tracking-wide">                        {isAnalysisLoading ? (
+                                <MoonLoader />
+                            ) : isAnalyzed ? (
+                                'View Analysis'
+                            ) : (
+                                'Analyze Diary'
+                            )}</span>
+                        </button>
+                    </div> */}
+                    <DailyUserDiary handleAnalysisButtonClick={handleAnalysisButtonClick} isAnalysisLoading={isAnalysisLoading} />
                     {errorMessage && (
                         <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
                             {errorMessage}
                         </div>
                     )}
-                    <Button
+                    {/* <Button
                         onClick={handleAnalysisButtonClick}
                         disabled={isAnalysisLoading}
                         className="bg-primary-hover text-white p-2 rounded hover:bg-primary"
@@ -185,7 +191,7 @@ const Diary = () => {
                         ) : (
                             'Analyze Diary'
                         )}
-                    </Button>
+                    </Button> */}
                 </>
             ) : (
                 <EmptyDiary />
