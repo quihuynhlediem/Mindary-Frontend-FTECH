@@ -27,7 +27,7 @@ export default function BottomNav() {
             </Link>
             <Link href="/diary" className="flex flex-col items-center justify-center flex-1 p-2">
                 <BookOpen className={`h-6 w-6 ${pathname.startsWith('/diary') ? 'text-[#7EC8D3]' : 'text-gray-400'}`} />
-                <span className={`text-xs mt-1 ${pathname.startsWith('/diary') ? 'text-[#7EC8D3] font-semibold' : 'text-gray-400'}`}>Diary</span>
+                <span className={`text-xs mt-1 ${pathname.startsWith('/diary') ? 'text-[#7EC8D3] font-semibold' : 'text-gray-400'}`}>Journalling</span>
             </Link>
             <Link href="/meditation" className="flex flex-col items-center justify-center flex-1 p-2">
                 <BookAudio className={`h-6 w-6 ${pathname.startsWith('/meditation') ? 'text-[#7EC8D3]' : 'text-gray-400'}`} />

@@ -47,7 +47,6 @@ const Insight = () => {
           <DataBlock emoji={emojiDict['calendar']} data={482} field='Lifetime days' />
         </div>
         <MoodChart />
-
         <ApexRadialChart />
       </div>
     );
