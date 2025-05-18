@@ -5,7 +5,6 @@ import Header from '@/components/general/Header';
 import DataBlock from '@/components/insight/DataBlock';
 import MoodChart from '@/components/insight/MoodChart';
 import useAuthStore from '@/hooks/useAuthStore';
-import { MoodRadialChart } from '@/components/insight/RadialChart';
 import ApexRadialChart from '@/components/insight/ApexRadialChart';
 
 const Insight = () => {
